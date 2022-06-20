@@ -102,7 +102,7 @@ const Navstyles = styled.div`
 `
 const Nav = ({ isOpened }) => {
 
-    const role = useSelector(state => state.auth.user.role);
+    const role = "user";
 
     const dispatch = useDispatch()
 
@@ -129,8 +129,8 @@ const Nav = ({ isOpened }) => {
         <Navstyles>
             <ul>
                 <li>
-                    <Link to="Software"> 
-                     My Software</Link>
+                    <Link to="Software">
+                        My Software</Link>
                 </li>
 
                 <li className="has-submenu">
@@ -140,8 +140,8 @@ const Nav = ({ isOpened }) => {
                             <Link to="/myMetric"> Metric</Link>
                         </li>
                         <li>
-                            <Link to="/myComment"> 
-                          Comment </Link>
+                            <Link to="/myComment">
+                                Comment </Link>
                         </li>
                         <li>
                             <Link to="/myRating"> Rating</Link>
@@ -169,7 +169,7 @@ const Nav = ({ isOpened }) => {
 
                 </li>
                 <li className="has-submenu">
-               
+
                     <a href="#">Evaluate a Software </a>
                     <ul className="submenu">
                         <li>
@@ -225,7 +225,7 @@ export const Sidebar = () => {
         </div> */}
             <Nav />
         </SidebarStyles>
-        
+
     )
 
 }

@@ -42,20 +42,21 @@ import NewMyPakage from "./myPakage/new";
 const Dashboard = () => {
 
 
-    const token = useSelector(state => state.auth.token);
+    // const token = useSelector(state => state.auth.token);
 
-    if (!token) {
-        return <Redirect to="/auth/login/" />
-    }
+    // if (!token) {
+    //     return <Redirect to="/auth/signin/" />
+    // }
 
     return (
         <div>
+            hhh
             <Page>
                 <Switch>
                     <Route path="/" exact component={HomeScreen} />
-                    <Route path="/software/" exact component={Software} />
-                    <Route path="/software/new/" exact component={NewSoftware} />
-                    <Route path="/software/:id/edit/" exact component={NewSoftware} />
+                    <Route path="/dash/software/" exact component={Software} />
+                    <Route path="/dash/software/new/" exact component={NewSoftware} />
+                    <Route path="/dash/software/:id/edit/" exact component={NewSoftware} />
                     {/* <Route path="/" exact component={App} /> */}
 
                     <Route path="/users/" exact component={Users} />
@@ -106,11 +107,11 @@ const Dashboard = () => {
                     <Route path="/resultMetric/:id" exact component={ResultMetric} />
                     <Route path="/resultComment/:id" exact component={ResultComment} />
                     <Route path="/resultRating/:id" exact component={ResultRating} />
-                    <Route path="/ResultExcellMetric" exact component={Exportexcel}/>
-                    <Route path="/myPakage/" exact component={MyPakage}/>
+                    <Route path="/ResultExcellMetric" exact component={Exportexcel} />
+                    <Route path="/myPakage/" exact component={MyPakage} />
                     <Route path="/myPakage/new/" exact component={NewMyPakage} />
 
-                    
+
                 </Switch>
             </Page>
         </div>
