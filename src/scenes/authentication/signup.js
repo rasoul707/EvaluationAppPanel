@@ -5,16 +5,17 @@ import { useEffect, useState } from "react";
 import Logo from "../../components/_Logo"
 import * as api from "../../api";
 import PhoneVerification from "./phoneVerification"
-
+import { useSnackbar } from 'notistack';
+import validex from 'validex'
 
 
 
 const SignUp = () => {
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [successAlert, setSuccessAlert] = useState(false);
 
 
     const [firstName, setFirstName] = useState('');
@@ -31,21 +32,13 @@ const SignUp = () => {
     const [isPhoneVerifyStep, setIsPhoneVerifyStep] = useState(localStorage.getItem("signup_isPhoneVerifyStep"));
 
     const submit = async () => {
-        // must accept terms
+
         if (!acceptTerms) {
-            setError("You must agree to all terms and conditions")
-            return;
-        }
-        if (password !== confirmPassword) {
-            setError("Password not match")
-            return;
+            return enqueueSnackbar("You must accept terms", { variant: "error" })
         }
 
 
-        setDisabled(true)
-        setLoading(true)
-        setError("")
-        setSuccessAlert(false)
+
         const data = {
             first_name: firstName,
             last_name: lastName,
@@ -54,17 +47,68 @@ const SignUp = () => {
             phone_number: phoneNumber,
             degrees: degrees,
         }
+        const schema = {
+            first_name: {
+                nameAlias: "First Name",
+                required: true,
+                type: 'string',
+                min: 3,
+            },
+            last_name: {
+                nameAlias: "Last Name",
+                required: true,
+                type: 'string',
+                min: 3,
+            },
+            email: {
+                nameAlias: "Email",
+                required: true,
+                type: 'string',
+                email: true,
+            },
+            password: {
+                nameAlias: "Password",
+                required: true,
+                type: 'string',
+                mediumPassword: true,
+                equal: [confirmPassword, new Error("$fields not match")],
+            },
+            phone_number: {
+                nameAlias: "Phone number",
+                required: true,
+                type: 'string',
+                regex: [
+                    /(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g,
+                    new Error("$field is not valid")
+                ],
+            },
+        }
+
+        const validator = validex(data, schema)
+        const isValidate = validator.validate()
+
+        if (!isValidate) {
+            const errors = validator.getError()
+            Object.values(errors).reverse().map((errorText) => {
+                return enqueueSnackbar(errorText, { variant: "error" })
+            })
+            return
+        }
+
+
+
+        setDisabled(true)
+        setLoading(true)
+
+
 
         try {
             await api.signUp(data)
+            enqueueSnackbar("Good, you must verify your phone number", { variant: 'success' })
             setLoading(false)
-            setSuccessAlert(true)
-
             setIsPhoneVerifyStep(true)
-
         } catch (error) {
-            setError(JSON.stringify(error.data.message))
-            setSuccessAlert(false)
+            enqueueSnackbar("[signUp]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
             setDisabled(false)
             setLoading(false)
         }
@@ -72,19 +116,14 @@ const SignUp = () => {
 
     const getDegreesList = async () => {
         setDisabled(true)
-        setLoading(true)
 
         try {
             const response = await api.getDegreesList()
             setDegreesList(response.data)
-            setError("")
         } catch (error) {
-            setError(JSON.stringify(error.data.message))
+            enqueueSnackbar("[getDegreesList]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
         }
-
-        setSuccessAlert(false)
         setDisabled(false)
-        setLoading(false)
     }
 
 
@@ -109,13 +148,11 @@ const SignUp = () => {
     return (
         <div className="auth-card">
             <Logo />
-            <Typography align="center" variant="h6" className="mart15 marb15" style={{ color: "#4e4e4e" }}>Sign up</Typography>
-            {error !== "" ? <Alert severity="error">{error}</Alert> : null}
-            {successAlert ? <Alert severity="success">Account created successfully</Alert> : null}
+            <Typography align="center" variant="h6">Sign up</Typography>
             <TextField
                 label="First name"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 value={firstName}
                 onChange={(e) => { setFirstName(e.target.value) }}
                 disabled={disabled}
@@ -123,12 +160,15 @@ const SignUp = () => {
             <TextField
                 label="Last name"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 value={lastName}
                 onChange={(e) => { setLastName(e.target.value) }}
                 disabled={disabled}
             />
-            <FormControl variant="filled" className="mart15">
+            <FormControl
+                variant="filled"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
+            >
                 <InputLabel>Degrees</InputLabel>
                 <Select
                     value={degrees}
@@ -143,7 +183,7 @@ const SignUp = () => {
             <TextField
                 label="Email"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value) }}
                 disabled={disabled}
@@ -151,7 +191,7 @@ const SignUp = () => {
             <TextField
                 label="Password"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 type="password"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value) }}
@@ -160,7 +200,7 @@ const SignUp = () => {
             <TextField
                 label="Confirm password"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => { setConfirmPassword(e.target.value) }}
@@ -170,7 +210,7 @@ const SignUp = () => {
                 label="Phone number"
                 helperText="+9892××××××××"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 value={phoneNumber}
                 onChange={(e) => { setPhoneNumber(e.target.value) }}
                 disabled={disabled}
@@ -178,7 +218,7 @@ const SignUp = () => {
             <FormControlLabel
                 label="I agree to all terms and conditions."
                 control={<Checkbox />}
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
                 disabled={disabled}
@@ -186,7 +226,7 @@ const SignUp = () => {
             <LoadingButton
                 variant="contained"
                 size="large"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Sign Up"
                 onClick={submit}
                 disabled={disabled}
@@ -196,7 +236,7 @@ const SignUp = () => {
                 component={LinkRoute}
                 to="/auth/signin"
                 size="small"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Sign in instead"
                 disabled={disabled}
             />

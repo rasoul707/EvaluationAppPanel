@@ -4,14 +4,16 @@ import { Link as LinkRoute, useHistory } from "react-router-dom"
 import { useState } from "react";
 import Logo from "../../components/_Logo"
 import * as api from "../../api";
+import { useSnackbar } from 'notistack';
+
 
 
 const PhoneVerification = ({ phoneNumber }) => {
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [successAlert, setSuccessAlert] = useState(false);
 
 
     const [otp, setOtp] = useState('');
@@ -25,17 +27,19 @@ const PhoneVerification = ({ phoneNumber }) => {
         const data = { otp }
         try {
             await api.checkPhoneVerify(data)
-            setError("")
             setLoading(false)
-            setSuccessAlert(true)
+
+            enqueueSnackbar("Phone verified successfully. Redirecting...", { variant: 'success' })
 
             localStorage.removeItem("signup_isPhoneVerifyStep")
             localStorage.removeItem("signup_PhoneNumber")
 
-            history.replace("/auth/signin")
+            setTimeout(() => {
+                history.replace("/auth/signin")
+            }, 1000)
 
         } catch (error) {
-            setError(JSON.stringify(error.data.message))
+            enqueueSnackbar("[checkPhoneVerify]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
             setDisabled(false)
             setLoading(false)
         }
@@ -50,27 +54,25 @@ const PhoneVerification = ({ phoneNumber }) => {
     return (
         <div className="auth-card">
             <Logo />
-            <Typography align="center" variant="h6" className="mart15 marb15" style={{ color: "#4e4e4e" }}>Verify phone number</Typography>
-            {error !== "" ? <Alert severity="error">{error}</Alert> : null}
-            {successAlert ? <Alert severity="success">Phone verified</Alert> : null}
+            <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Verify phone number</Typography>
             <TextField
                 label="Phone number"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 value={phoneNumber}
                 disabled={true}
             />
             <TextField
                 label="Verify Code"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 value={otp}
                 onChange={(e) => { setOtp(e.target.value) }}
                 disabled={disabled}
             />
             <Link
                 href="#"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Resend"
                 variant="subtitle2"
                 underline="none"
@@ -80,7 +82,7 @@ const PhoneVerification = ({ phoneNumber }) => {
             <LoadingButton
                 variant="contained"
                 size="large"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Verify"
                 onClick={submit}
                 disabled={disabled}
@@ -90,7 +92,7 @@ const PhoneVerification = ({ phoneNumber }) => {
                 component={LinkRoute}
                 to="/auth/signin"
                 size="small"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Sign in"
                 disabled={true}
             />

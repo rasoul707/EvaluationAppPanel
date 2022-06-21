@@ -55,16 +55,20 @@ export const getSoftwaresList = async () => {
 
 // ***
 
-export const getSoftware = async (id) => {
+export const getSoftwareByID = async (id) => {
     return await axios.get(`${baseUrl}software/${id}/`, headers()).catch((error) => { throw error.response })
+}
+
+export const getSoftwareQuery = async (q) => {
+    return await axios.get(`${baseUrl}software/${q}`, headers()).catch((error) => { throw error.response })
 }
 
 export const newSoftware = async (data) => {
     return await axios.post(`${baseUrl}software/`, data, headers()).catch((error) => { throw error.response })
 }
 
-export const editSoftware = async (data) => {
-    return await axios.put(`${baseUrl}software/`, data, headers()).catch((error) => { throw error.response })
+export const editSoftware = async (id, data) => {
+    return await axios.put(`${baseUrl}software/${id}/`, data, headers()).catch((error) => { throw error.response })
 }
 
 export const deleteSoftware = async (id) => {
@@ -72,3 +76,12 @@ export const deleteSoftware = async (id) => {
 }
 
 /****** software */
+
+
+
+/****** uploadImage */
+export const uploadImage = async (data, config) => {
+    return await axios.post(`${baseUrl}images/`, data, { ...headers(), ...config }).catch((error) => { throw error.response })
+}
+
+/****** uploadImage */

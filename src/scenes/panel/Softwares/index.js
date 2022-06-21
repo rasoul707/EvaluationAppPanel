@@ -133,7 +133,7 @@ export default function SoftwaresList() {
             color="primary"
             aria-label="add"
             variant="extended"
-            size="medium"
+            size="large"
             sx={{
                 position: "fixed",
                 bottom: (theme) => theme.spacing(2),

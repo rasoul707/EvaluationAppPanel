@@ -4,47 +4,72 @@ import { Link as LinkRoute } from "react-router-dom"
 import { useState } from "react";
 import Logo from "../../components/_Logo"
 import * as api from "../../api";
-
+import { useSnackbar } from 'notistack';
+import validex from 'validex'
 
 
 const SignIn = () => {
 
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [successAlert, setSuccessAlert] = useState(false);
 
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
 
+
+
     const submit = async () => {
-        setDisabled(true)
-        setLoading(true)
-        setSuccessAlert(false)
-        setError("")
 
         const data = {
             username: email,
             password: password
         }
+        const schema = {
+            username: {
+                nameAlias: "Email",
+                required: true,
+                type: 'string',
+                email: true,
+            },
+            password: {
+                nameAlias: "Password",
+                required: true,
+                type: 'string',
+                mediumPassword: true
+            },
+        }
+
+        const validator = validex(data, schema)
+        const isValidate = validator.validate()
+
+        if (!isValidate) {
+            const errors = validator.getError()
+            Object.values(errors).reverse().map((errorText) => {
+                return enqueueSnackbar(errorText, { variant: "error" })
+            })
+            return
+        }
+
+        setDisabled(true)
+        setLoading(true)
 
         try {
             const response = await api.signIn(data)
-            setError("")
             setLoading(false)
-            setSuccessAlert(true)
 
             localStorage.setItem("token", response.data.token);
+            enqueueSnackbar("Welcome :) Please wait...", { variant: 'success' })
 
             setTimeout(() => {
                 window.location.reload();
             }, 1000)
 
         } catch (error) {
-            setError(JSON.stringify(error.data.message))
-            setSuccessAlert(false)
+            enqueueSnackbar("[signIn]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
             setDisabled(false)
             setLoading(false)
         }
@@ -54,13 +79,11 @@ const SignIn = () => {
     return (
         <div className="auth-card">
             <Logo />
-            <Typography align="center" variant="h6" className="mart15 marb15" style={{ color: "#4e4e4e" }}>Sign in</Typography>
-            {error !== "" ? <Alert severity="error">{error}</Alert> : null}
-            {successAlert ? <Alert severity="success">Login successfully</Alert> : null}
+            <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Sign in</Typography>
             <TextField
                 label="Email"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 autoComplete={true}
                 type="email"
                 value={email}
@@ -70,7 +93,7 @@ const SignIn = () => {
             <TextField
                 label="Password"
                 variant="filled"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 autoComplete={true}
                 type="password"
                 value={password}
@@ -81,7 +104,7 @@ const SignIn = () => {
             <LoadingButton
                 variant="contained"
                 size="large"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Login"
                 onClick={submit}
                 disabled={disabled}
@@ -91,7 +114,7 @@ const SignIn = () => {
                 component={LinkRoute}
                 to="/auth/signup"
                 size="small"
-                className="mart15"
+                sx={{ marginTop: (theme) => theme.spacing(2) }}
                 children="Create account"
                 disabled={disabled}
             />

@@ -27,6 +27,8 @@ import EvaluationIcon from '@mui/icons-material/Reviews';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 
+import { deepOrange } from '@mui/material/colors';
+
 const pages = [
     { title: 'New Software', icon: <NewSoftIcon />, url: '/softwares/new' },
     { title: 'Manage Softwares', icon: <SoftsIcon />, url: '/softwares' },
@@ -171,8 +173,9 @@ const ResponsiveAppBar = () => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Profile">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <Avatar alt={user.first_name + ' ' + user.last_name} src="/no-avatar" />
                             </IconButton>
+
                         </Tooltip>
                         <Menu
                             anchorEl={anchorElUser}
@@ -213,7 +216,7 @@ const ResponsiveAppBar = () => {
                                 component={LinkRoute}
                                 to={"/profile"}
                             >
-                                <Avatar alt={user.first_name + ' ' + user.last_name} src="avatar.png" />
+                                <Avatar alt={user.first_name + ' ' + user.last_name} src="/no-avatar" />
                                 {user.first_name + ' ' + user.last_name}
                             </MenuItem>
                             <Divider />
