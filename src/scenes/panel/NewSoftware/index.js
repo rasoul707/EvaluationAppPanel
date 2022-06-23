@@ -1,40 +1,21 @@
 import * as React from 'react';
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useSnackbar } from 'notistack';
+
+import validex from 'validex'
 
 
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import { Select, MenuItem, FormControl, InputLabel, Box, Fab, IconButton, Avatar } from '@mui/material';
-import CardContent from '@mui/material/CardContent';
-
-import TextField from '@mui/material/TextField';
-
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import DescriptionIcon from '@mui/icons-material/Description';
-import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
+import { Grid, Card, Fab } from '@mui/material';
+import { LoadingButton } from '@mui/lab'
 
 import CheckIcon from '@mui/icons-material/Check';
 
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-
-import { useSnackbar } from 'notistack';
-import validex from 'validex'
-
-import { LoadingButton } from '@mui/lab'
 
 import * as api from "../../../api";
-import { deepOrange } from '@mui/material/colors';
 
-
+import SoftwareForm from "./SoftwareForm"
+import EvaluationsForm from "./EvaluationsForm"
 
 
 
@@ -44,23 +25,22 @@ export default function NewSoftware() {
     const params = useParams()
     const user = useSelector(state => state.auth.user)
     const history = useHistory()
+
+
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     const isNew = params.softID === 'new'
     const softID = !isNew ? parseInt(params.softID) : null
 
 
-    const [evalPanelsExpanded, setEvalPanelsExpanded] = React.useState(false);
-    const handlePanelExpanded = (panel) => (event, isExpanded) => {
-        setEvalPanelsExpanded(isExpanded ? panel : false);
-    }
+
 
     const [disabled, setDisabled] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
 
     const [name, setName] = React.useState('');
-    const [area, setArea] = React.useState('');
+    const [area, setArea] = React.useState("none");
     const [downloadLink, setDownloadLink] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [image, setImage] = React.useState(null);
@@ -68,21 +48,51 @@ export default function NewSoftware() {
     const [areaList, setAreaList] = React.useState([]);
 
 
-    const getAreasList = async () => {
-        setDisabled(true)
-        setLoading(true)
+    const getSoftware = async () => {
+        try {
+            const response = await api.getSoftware(softID)
+            const m = response.data
+            setName(m.software_name)
+            setArea(m.area.id)
+            setDownloadLink(m.download_link)
+            setDescription(m.description)
+            setImage(m.image)
+        } catch (error) {
+            enqueueSnackbar("[getSoftware]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            // history.replace("/softwares")
+        }
+    }
 
+
+    const getAreasList = async () => {
         try {
             const response = await api.getApplicationAreaList()
             setAreaList(response.data)
         } catch (error) {
             enqueueSnackbar("[getApplicationAreaList]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
         }
-
-        setDisabled(false)
-        setLoading(false)
     }
-    React.useEffect(() => { getAreasList() }, [])
+
+    React.useEffect(() => {
+        const data = async () => {
+            setDisabled(true)
+
+            if (!isNew) {
+                await getAreasList()
+                await getSoftware()
+            }
+            else {
+                setName('')
+                setArea("none")
+                setDownloadLink('')
+                setDescription('')
+                setImage(null)
+                await getAreasList()
+            }
+            setDisabled(false)
+        }
+        data()
+    }, [params])
 
 
     const submit = async () => {
@@ -142,20 +152,33 @@ export default function NewSoftware() {
         setLoading(true)
 
         try {
-            const responseCheck = await api.getSoftwareQuery(`?created_by=&software_name=${name}`)
-            if (responseCheck.data.length) {
+            const responseCheck = await api.getSoftwaresList(`created_by=&software_name=${name}`)
+            let sameName = true
+            if (!isNew) {
+                responseCheck.data.map((v, ii) => {
+                    if (v.id !== softID) sameName = false
+                    return null
+                })
+            } else
+                if (responseCheck.data.length) sameName = false
+            if (!sameName) {
                 enqueueSnackbar("This software already added", { variant: 'error' })
             } else {
+                let res
                 if (!isNew) {
-                    await api.editSoftware(softID, data)
+                    res = await api.editSoftware(softID, data)
                     enqueueSnackbar("Your software updated successfully", { variant: 'success' })
                 } else {
-                    await api.newSoftware(data)
+                    res = await api.newSoftware(data)
                     enqueueSnackbar("Your software added successfully", { variant: 'success' })
                 }
 
-                history.push(`/softwares`);
+                await submitEvaluations(res.data.id)
+                history.push(`/softwares/` + res.data.id)
             }
+
+
+
         } catch (error) {
             enqueueSnackbar("[newSoftware]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
         }
@@ -172,6 +195,9 @@ export default function NewSoftware() {
             enqueueSnackbar("Image size must be less than 1MB", { variant: 'error' })
             return;
         }
+
+        setLoading(true)
+        setDisabled(true)
 
         const uploadingSnackKey = enqueueSnackbar("Uploading image ...", { variant: 'info', autoHideDuration: null })
 
@@ -190,226 +216,131 @@ export default function NewSoftware() {
         } catch (error) {
             enqueueSnackbar("[uploadImage]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
         }
+
+        setLoading(false)
+        setDisabled(false)
     }
 
 
 
 
-    const sxicons = { color: '#0277bd', mr: 1, my: 0.5 }
-    const sxbox = { display: 'flex', alignItems: 'flex-end', marginTop: (theme) => theme.spacing(2) }
-    const SoftwareFrom = <Grid container>
-        <Grid
-            item
-            lg={6}
-            md={9}
-            sm={6}
-            xs={12}
-        >
+    const [metricForm, setMetricForm] = React.useState([])
+    const [commentForm, setCommentForm] = React.useState([])
+    const [ratingForm, setRatingForm] = React.useState([])
+    const [compareForm, setCompareForm] = React.useState([])
+    const [questionnaireForm, setQuestionnaireForm] = React.useState([])
 
-            <CardContent>
+    const submitEvaluations = async (softwareID) => {
 
-                <Typography variant="h6" component="div">
-                    {isNew ? "New Software" : "Edit Software"}
-                </Typography>
-
-
-                <Box sx={sxbox}>
-                    <AutoAwesomeMosaicIcon sx={sxicons} />
-                    <TextField
-                        label="Name"
-                        variant="standard"
-                        autoComplete={true}
-                        type="text"
-                        fullWidth
-                        value={name}
-                        onChange={(e) => { setName(e.target.value) }}
-                        disabled={disabled}
-
-                    />
-                </Box>
-
-                <Box sx={sxbox}>
-                    <ViewCarouselIcon sx={sxicons} />
-                    <FormControl variant="standard" fullWidth>
-                        <InputLabel>Area</InputLabel>
-                        <Select
-                            value={area}
-                            onChange={(e) => { setArea(e.target.value) }}
-                            disabled={disabled}
-                        >
-                            {areaList.map(({ id, area_name }) => <MenuItem value={id}>{area_name}</MenuItem>)}
-                            {areaList.length === 0 ? <MenuItem value={0} disabled>Not found</MenuItem> : null}
-                        </Select>
-                    </FormControl>
-                </Box>
-
-                <Box sx={sxbox}>
-                    <GetAppIcon sx={sxicons} />
-                    <TextField
-                        label="Download link"
-                        variant="standard"
-                        autoComplete={true}
-                        type="url"
-                        fullWidth
-                        value={downloadLink}
-                        onChange={(e) => { setDownloadLink(e.target.value) }}
-                        disabled={disabled}
-
-                    />
-                </Box>
-
-
-                <Box sx={sxbox}>
-                    <DescriptionIcon sx={sxicons} />
-                    <TextField
-                        label="Description"
-                        variant="standard"
-                        autoComplete={true}
-                        type="text"
-                        fullWidth
-                        multiline
-                        rows={5}
-                        value={description}
-                        onChange={(e) => { setDescription(e.target.value) }}
-                        disabled={disabled}
-
-                    />
-                </Box>
-
-
-
-            </CardContent>
-        </Grid>
-
-        <Grid
-            lg={6}
-            md={3}
-            sm={6}
-            xs={12}
-            container
-            spacing={0}
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ marginBottom: (theme) => theme.spacing(2), marginTop: (theme) => theme.spacing(2) }}
-        >
-
-            {
-                image ?
-
-                    <Grid item >
-                        <Grid container direction="column">
-                            <Avatar
-                                alt={name.toUpperCase()}
-                                src={image.medium}
-                                sx={{ width: 75, height: 75 }}
-                                variant="rounded"
-                            />
-                            <Grid container direction="row" justifyContent="space-between">
-                                <IconButton color='error' onClick={() => setImage(null)} disabled={disabled}>
-                                    <DeleteOutlineIcon />
-                                </IconButton>
-                                <IconButton color='info' component={"label"} disabled={disabled}>
-                                    <ModeEditIcon />
-                                    <input accept="image/*" type="file" style={{ display: "none" }} onChange={handleUploadImage} disabled={disabled} />
-                                </IconButton>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-
-                    :
-                    <Grid item component={"label"} sx={{ cursor: disabled || "pointer" }} >
-                        <Avatar
-                            alt={name.toUpperCase()}
-                            src={"/no-avatar"}
-                            sx={{ width: 75, height: 75, bgcolor: disabled || deepOrange[500] }}
-                            children={<InsertPhotoIcon />}
-                            variant="rounded"
-                        />
-                        <input accept="image/*" type="file" style={{ display: "none" }} onChange={handleUploadImage} disabled={disabled} />
-                    </Grid>
+        // metricForm
+        metricForm.map(async val => {
+            const data = { software: softwareID, ...val }
+            try {
+                if (val.id) {
+                    await api.editMetricEvaluate(val.id, data)
+                }
+                else {
+                    await api.newMetricEvaluate(data)
+                }
+            } catch (error) {
+                enqueueSnackbar("[metricForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
             }
+        })
 
-        </Grid>
+        // commentForm
+        commentForm.map(async val => {
+            const data = { software: softwareID, ...val }
+            try {
+                if (val.id) {
+                    await api.editCommentEvaluate(val.id, data)
+                }
+                else {
+                    await api.newCommentEvaluate(data)
+                }
+            } catch (error) {
+                enqueueSnackbar("[commentForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            }
+        })
 
-    </Grid >
+        // ratingForm
+        ratingForm.map(async val => {
+            const data = { software: softwareID, ...val }
+            try {
+                if (val.id) {
+                    await api.editRatingEvaluate(val.id, data)
+                }
+                else {
+                    await api.newRatingEvaluate(data)
+                }
+            } catch (error) {
+                enqueueSnackbar("[ratingForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            }
+        })
 
-
-    let Evaluations = []
-    Evaluations.push(
-        <Accordion expanded={evalPanelsExpanded === 'metric'} onChange={handlePanelExpanded('metric')}>
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                children={<Typography children="Metric" variant="button" />}
-            />
-            <AccordionDetails>
-
-            </AccordionDetails>
-        </Accordion>
-    )
-
-    Evaluations.push(
-        <Accordion expanded={evalPanelsExpanded === 'comment'} onChange={handlePanelExpanded('comment')} >
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                children={<Typography children="Comment" variant="button" />}
-            />
-            <AccordionDetails>
-
-            </AccordionDetails>
-        </Accordion >
-    )
-
-    Evaluations.push(
-        <Accordion expanded={evalPanelsExpanded === 'rating'} onChange={handlePanelExpanded('rating')} >
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                children={<Typography children="Rating" variant="button" />}
-            />
-            <AccordionDetails>
-
-            </AccordionDetails>
-        </Accordion >
-    )
-
-
-    Evaluations.push(
-        <Accordion expanded={evalPanelsExpanded === 'compare'} onChange={handlePanelExpanded('compare')}>
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                children={<Typography children="Compare" variant="button" />}
-            />
-            <AccordionDetails>
-
-            </AccordionDetails>
-        </Accordion>
-    )
+        // compareForm
+        compareForm.map(async val => {
+            const data = { software: softwareID, ...val }
+            try {
+                if (val.id) {
+                    await api.editCompareEvaluate(val.id, data)
+                }
+                else {
+                    await api.newCompareEvaluate(data)
+                }
+            } catch (error) {
+                enqueueSnackbar("[compareForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            }
+        })
 
 
-    Evaluations.push(
-        <Accordion expanded={evalPanelsExpanded === 'questionnaire'} onChange={handlePanelExpanded('questionnaire')}>
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                children={<Typography children="Questionnaire" variant="button" />}
-            />
-            <AccordionDetails>
+        // questionnaireForm
+        questionnaireForm.map(async val => {
+            const data = { software: softwareID, ...val }
+            try {
+                if (val.id) {
+                    await api.editQuestionnaireEvaluate(val.id, data)
+                }
+                else {
+                    await api.newQuestionnaireEvaluate(data)
+                }
+            } catch (error) {
+                enqueueSnackbar("[questionnaireForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            }
+        })
 
-            </AccordionDetails>
-        </Accordion>
-    )
 
-
-
+    }
 
     return <>
         <Grid container spacing={2}>
             <Grid item md={6} xs={12}>
                 <Card>
-                    {SoftwareFrom}
+                    <SoftwareForm
+                        {...{
+                            isNew,
+                            disabled,
+                            areaList,
+                            name, setName,
+                            area, setArea,
+                            downloadLink, setDownloadLink,
+                            description, setDescription,
+                            image, setImage,
+                            handleUploadImage
+                        }}
+                    />
                 </Card>
             </Grid>
             <Grid item md={6} xs={12}>
-                {Evaluations}
+                <EvaluationsForm
+                    {...{
+                        isNew, softID, area,
+                        metricForm, setMetricForm,
+                        commentForm, setCommentForm,
+                        ratingForm, setRatingForm,
+                        compareForm, setCompareForm,
+                        questionnaireForm, setQuestionnaireForm,
+                    }}
+                />
             </Grid>
         </Grid>
 

@@ -12,6 +12,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Fab from '@mui/material/Fab';
+import Skeleton from '@mui/material/Skeleton';
+import Alert from '@mui/material/Alert';
+import Rating from '@mui/material/Rating';
+
 
 import AddIcon from '@mui/icons-material/Add';
 
@@ -19,107 +23,94 @@ import { Link as LinkRoute } from "react-router-dom"
 
 import immggg from "../../../static/img/login2.png"
 
+import * as api from "../../../api";
+import { useSnackbar } from 'notistack';
 
 
 
-const Img = styled('img')({
-    margin: 'auto',
-    display: 'block',
-    maxWidth: '100%',
-    maxHeight: '100%',
-});
 
-const Item = ({ ID, remove }) => <Paper
-    sx={{
-        p: 2,
-        margin: 'auto',
-        flexGrow: 1,
-        backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    }}
->
-    <Grid container spacing={2}>
-        <Grid item>
-            <ButtonBase sx={{ width: 128, height: 128 }}>
-                <Img alt="complex" src={immggg} />
-            </ButtonBase>
-        </Grid>
-
-        <Grid item xs={12} sm container>
-            <Grid item xs container direction="column" spacing={2}>
-                <Grid item xs>
-                    <Typography gutterBottom variant="subtitle1" component="div">
-                        Software name
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                        Area: mmm
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        ID: {ID}
-                    </Typography>
-                </Grid>
-                <Grid item xs container direction="row" spacing={1}>
-                    <Grid item>
-                        <Button
-                            children="Edit"
-                            color="info"
-                            component={LinkRoute}
-                            to={`/softwares/${ID}`}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            children="Result"
-                            color="success"
-                            component={LinkRoute}
-                        // to={`/softwares/${ID}/result`}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            children="Remove"
-                            color="error"
-                            onClick={() => remove(ID)}
-                        />
-                    </Grid>
-                </Grid>
-            </Grid>
-            {/* <Grid item>
-                <Typography variant="subtitle1" component="div">
-                    $19.00
-                </Typography>
-            </Grid> */}
-        </Grid>
-
-
-    </Grid>
-</Paper>;
 
 export default function SoftwaresList() {
 
-    const [removeID, setRemoveID] = React.useState(null);
+    const [disabled, setDisabled] = React.useState(false)
+    const [loading, setLoading] = React.useState(false)
+
+
+    const [removeID, setRemoveID] = React.useState(null)
+    const [softwares, setSoftwares] = React.useState([])
+
     const closeDialog = () => setRemoveID(null)
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
 
-    const removeSoftware = () => {
+
+    // not remove just de_active
+    const removeSoftware = async () => {
         const softwareID = removeID;
         closeDialog()
-        alert(softwareID)
+        if (softwareID) {
+            try {
+                await api.deleteSoftware(softwareID)
+                enqueueSnackbar("Deleted successfully", { variant: 'success' })
+                await getSoftwaresList()
+            } catch (error) {
+                enqueueSnackbar("[removeSoftware]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            }
+        }
     }
+
+    const getSoftwaresList = async () => {
+        try {
+            const response = await api.getSoftwaresList()
+            setSoftwares(response.data)
+        } catch (error) {
+            enqueueSnackbar("[getSoftwaresList]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+        }
+    }
+
+    React.useEffect(() => {
+        const data = async () => {
+            setDisabled(true)
+            setLoading(true)
+            setTimeout(async () => {
+                await getSoftwaresList()
+                setDisabled(false)
+                setLoading(false)
+            }, 1000)
+        }
+        data()
+    }, [])
+
+
 
 
     return <>
 
         <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }}>
-            {Array.from(Array(11)).map((_, index) => (
+            {Array.from(loading ? Array(3) : softwares).map((data, index) => (
                 <Grid item xs={2} sm={4} md={4} key={index}>
                     <Item
-                        ID={index}
+                        ID={0}
                         remove={setRemoveID}
+                        data={data}
                     />
                 </Grid>
             ))}
+            {!loading && softwares.length === 0
+                ?
+                <Grid item lg={12} key={0}>
+                    <Alert
+                        variant='standard'
+                        children="You have not active software"
+                        severity="warning"
+                        action={<Button color="inherit" size="small" component={LinkRoute} to={"/softwares/new"}>Add</Button>}
+                    />
+                </Grid>
+                : null
+            }
         </Grid>
+
+
 
         <RemoveSoftwareDialog
             removeID={removeID}
@@ -150,6 +141,113 @@ export default function SoftwaresList() {
 }
 
 
+
+const Img = styled('img')({
+    margin: 'auto',
+    display: 'block',
+    maxWidth: '100%',
+    maxHeight: '100%',
+});
+
+const Item = ({ remove, data }) => {
+    const isLoading = !data
+    return <Paper
+        sx={{
+            p: 2,
+            margin: 'auto',
+            flexGrow: 1,
+            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        }}
+    >
+
+        <Grid container spacing={2} justifyContent="center">
+            <Grid item>
+                {isLoading
+                    ?
+                    <Skeleton animation="wave" variant='rectangular' width={128} height={128} />
+                    :
+                    <Img alt="complex" src={data.image?.medium} sx={{ width: 128, height: 128 }} />
+                }
+            </Grid>
+
+            <Grid item xs={12} sm container>
+                <Grid item xs container direction="column" spacing={2}>
+                    <Grid item xs>
+                        <Typography gutterBottom variant="subtitle1" component="div">
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='text' />
+                                :
+                                data.software_name
+                            }
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='text' />
+                                :
+                                "Area: " + data.area.area_name
+                            }
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='text' />
+                                :
+                                "ID: " + data.id
+                            }
+                        </Typography>
+                    </Grid>
+                    <Grid item xs container direction="row" spacing={1}>
+                        <Grid item>
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Edit" />} />
+                                :
+                                <Button
+                                    children={"Edit"}
+                                    color="info"
+                                    component={LinkRoute}
+                                    to={`/softwares/${data.id}`}
+                                />
+                            }
+                        </Grid>
+                        <Grid item>
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Result" />} />
+                                :
+                                <Button
+                                    children="Result"
+                                    color="success"
+                                    component={LinkRoute}
+                                    to={`/softwares/${data.id}/result`}
+                                />
+                            }
+                        </Grid>
+                        <Grid item>
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Remove" />} />
+                                :
+                                <Button
+                                    children="Remove"
+                                    color="error"
+                                    onClick={() => remove(data.id)}
+                                />
+                            }
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item sx={{ position: "relative" }}>
+                    {data?.rating ? <Rating value={data.rating} precision={0.5} readOnly sx={{ position: "absolute", right: 0 }} /> : null}
+                </Grid>
+            </Grid>
+
+
+        </Grid>
+    </Paper>
+}
 
 const RemoveSoftwareDialog = ({ removeID, closeDialog, removeSoftware }) => {
     return <Dialog

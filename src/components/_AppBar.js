@@ -27,7 +27,6 @@ import EvaluationIcon from '@mui/icons-material/Reviews';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import { deepOrange } from '@mui/material/colors';
 
 const pages = [
     { title: 'New Software', icon: <NewSoftIcon />, url: '/softwares/new' },

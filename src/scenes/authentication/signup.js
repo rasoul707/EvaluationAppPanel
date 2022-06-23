@@ -171,13 +171,14 @@ const SignUp = () => {
             >
                 <InputLabel>Degrees</InputLabel>
                 <Select
+                    label="Degrees"
                     value={degrees}
                     onChange={(e) => { setDegrees(e.target.value) }}
                     multiple
                     disabled={disabled}
                 >
                     {degreesList.map(({ id, degree }) => <MenuItem value={id}>{degree}</MenuItem>)}
-                    {degreesList.length === 0 ? <MenuItem value={0} disabled>Not found</MenuItem> : null}
+                    {degreesList.length === 0 ? <MenuItem value={null} disabled>Not found</MenuItem> : null}
                 </Select>
             </FormControl>
             <TextField
