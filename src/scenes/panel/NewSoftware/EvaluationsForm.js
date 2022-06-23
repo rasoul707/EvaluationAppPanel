@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable array-callback-return */
 
 
 
@@ -5,7 +7,7 @@ import * as React from 'react';
 import { useParams } from "react-router-dom";
 
 import { useSnackbar } from 'notistack';
-import { AccordionSummary, Dialog, DialogTitle, DialogActions, Button, DialogContentText, DialogContent, Typography, InputAdornment, Grid, Box, Paper, FormControl, InputLabel, Select, MenuItem, ListSubheader, TextField, FormControlLabel, Switch, Divider, IconButton, Accordion, AccordionDetails, } from '@mui/material';
+import { AccordionSummary, Dialog, DialogTitle, DialogActions, Button, DialogContentText, DialogContent, Typography, Grid, FormControl, InputLabel, Select, MenuItem, ListSubheader, TextField, Switch, Divider, IconButton, Accordion, AccordionDetails, } from '@mui/material';
 import { LoadingButton } from '@mui/lab'
 import {
     ExpandMore as ExpandMoreIcon,

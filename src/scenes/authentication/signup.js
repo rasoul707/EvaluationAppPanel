@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { TextField, Button, Checkbox, FormControlLabel, Typography, Select, MenuItem, FormControl, InputLabel, Grid, Card } from "@mui/material"
 import { LoadingButton } from '@mui/lab'
 import { Link as LinkRoute } from "react-router-dom"
@@ -12,7 +13,7 @@ import validex from 'validex'
 
 const SignUp = () => {
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar()
 
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);

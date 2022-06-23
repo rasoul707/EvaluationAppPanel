@@ -10,7 +10,7 @@ import validex from 'validex'
 
 const SignIn = () => {
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar()
 
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);

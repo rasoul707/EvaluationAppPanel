@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 
 import NewSoftware from "./NewSoftware"
 import Softwares from "./Softwares"
-import Result from "./Result"
 import Evaluations from "./Evaluations"
 
 import Profile from "./Profile"

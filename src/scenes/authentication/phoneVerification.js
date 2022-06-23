@@ -10,7 +10,7 @@ import { useSnackbar } from 'notistack';
 
 const PhoneVerification = ({ phoneNumber }) => {
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar()
 
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);

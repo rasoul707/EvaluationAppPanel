@@ -30,6 +30,7 @@ import { useSnackbar } from 'notistack';
 
 export default function SoftwaresList() {
 
+    // eslint-disable-next-line no-unused-vars
     const [disabled, setDisabled] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
@@ -38,7 +39,7 @@ export default function SoftwaresList() {
     const [softwares, setSoftwares] = React.useState([])
 
     const closeDialog = () => setRemoveID(null)
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar()
 
 
 
@@ -77,6 +78,7 @@ export default function SoftwaresList() {
             }, 1000)
         }
         data()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
