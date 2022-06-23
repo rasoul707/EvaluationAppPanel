@@ -1,4 +1,4 @@
-import { TextField, Button, Checkbox, FormControlLabel, Alert, Typography, Select, MenuItem, FormControl, InputLabel } from "@mui/material"
+import { TextField, Button, Checkbox, FormControlLabel, Typography, Select, MenuItem, FormControl, InputLabel, Grid, Card } from "@mui/material"
 import { LoadingButton } from '@mui/lab'
 import { Link as LinkRoute } from "react-router-dom"
 import { useEffect, useState } from "react";
@@ -146,102 +146,104 @@ const SignUp = () => {
 
 
     return (
-        <div className="auth-card">
-            <Logo />
-            <Typography align="center" variant="h6">Sign up</Typography>
-            <TextField
-                label="First name"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                value={firstName}
-                onChange={(e) => { setFirstName(e.target.value) }}
-                disabled={disabled}
-            />
-            <TextField
-                label="Last name"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                value={lastName}
-                onChange={(e) => { setLastName(e.target.value) }}
-                disabled={disabled}
-            />
-            <FormControl
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-            >
-                <InputLabel>Degrees</InputLabel>
-                <Select
-                    label="Degrees"
-                    value={degrees}
-                    onChange={(e) => { setDegrees(e.target.value) }}
-                    multiple
+        <Card sx={{ width: 300, padding: 7, margin: "50px auto" }}>
+            <Grid container direction="column">
+                <Logo />
+                <Typography align="center" variant="h6">Sign up</Typography>
+                <TextField
+                    label="First name"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    value={firstName}
+                    onChange={(e) => { setFirstName(e.target.value) }}
                     disabled={disabled}
+                />
+                <TextField
+                    label="Last name"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    value={lastName}
+                    onChange={(e) => { setLastName(e.target.value) }}
+                    disabled={disabled}
+                />
+                <FormControl
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
                 >
-                    {degreesList.map(({ id, degree }) => <MenuItem value={id}>{degree}</MenuItem>)}
-                    {degreesList.length === 0 ? <MenuItem value={null} disabled>Not found</MenuItem> : null}
-                </Select>
-            </FormControl>
-            <TextField
-                label="Email"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                value={email}
-                onChange={(e) => { setEmail(e.target.value) }}
-                disabled={disabled}
-            />
-            <TextField
-                label="Password"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                type="password"
-                value={password}
-                onChange={(e) => { setPassword(e.target.value) }}
-                disabled={disabled}
-            />
-            <TextField
-                label="Confirm password"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => { setConfirmPassword(e.target.value) }}
-                disabled={disabled}
-            />
-            <TextField
-                label="Phone number"
-                helperText="+9892××××××××"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                value={phoneNumber}
-                onChange={(e) => { setPhoneNumber(e.target.value) }}
-                disabled={disabled}
-            />
-            <FormControlLabel
-                label="I agree to all terms and conditions."
-                control={<Checkbox />}
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                checked={acceptTerms}
-                onChange={(e) => setAcceptTerms(e.target.checked)}
-                disabled={disabled}
-            />
-            <LoadingButton
-                variant="contained"
-                size="large"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                children="Sign Up"
-                onClick={submit}
-                disabled={disabled}
-                loading={loading}
-            />
-            <Button
-                component={LinkRoute}
-                to="/auth/signin"
-                size="small"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                children="Sign in instead"
-                disabled={disabled}
-            />
-        </div>
+                    <InputLabel>Degrees</InputLabel>
+                    <Select
+                        label="Degrees"
+                        value={degrees}
+                        onChange={(e) => { setDegrees(e.target.value) }}
+                        multiple
+                        disabled={disabled}
+                    >
+                        {degreesList.map(({ id, degree }) => <MenuItem value={id}>{degree}</MenuItem>)}
+                        {degreesList.length === 0 ? <MenuItem value={null} disabled>Not found</MenuItem> : null}
+                    </Select>
+                </FormControl>
+                <TextField
+                    label="Email"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value) }}
+                    disabled={disabled}
+                />
+                <TextField
+                    label="Password"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    type="password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value) }}
+                    disabled={disabled}
+                />
+                <TextField
+                    label="Confirm password"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => { setConfirmPassword(e.target.value) }}
+                    disabled={disabled}
+                />
+                <TextField
+                    label="Phone number"
+                    helperText="+9892××××××××"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    value={phoneNumber}
+                    onChange={(e) => { setPhoneNumber(e.target.value) }}
+                    disabled={disabled}
+                />
+                <FormControlLabel
+                    label="I agree to all terms and conditions."
+                    control={<Checkbox />}
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    checked={acceptTerms}
+                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                    disabled={disabled}
+                />
+                <LoadingButton
+                    variant="contained"
+                    size="large"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    children="Sign Up"
+                    onClick={submit}
+                    disabled={disabled}
+                    loading={loading}
+                />
+                <Button
+                    component={LinkRoute}
+                    to="/auth/signin"
+                    size="small"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    children="Sign in instead"
+                    disabled={disabled}
+                />
+            </Grid>
+        </Card>
     );
 
 

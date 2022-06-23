@@ -1,4 +1,3 @@
-import './style.scss'
 import { Redirect, Route, Switch, useHistory } from "react-router-dom"
 import SignIn from "./signin"
 import SignUp from "./signup"

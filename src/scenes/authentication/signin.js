@@ -1,4 +1,4 @@
-import { TextField, Button, Typography, Alert } from "@mui/material"
+import { TextField, Button, Typography, Grid, Card } from "@mui/material"
 import { LoadingButton } from '@mui/lab'
 import { Link as LinkRoute } from "react-router-dom"
 import { useState } from "react";
@@ -77,48 +77,50 @@ const SignIn = () => {
     }
 
     return (
-        <div className="auth-card">
-            <Logo />
-            <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Sign in</Typography>
-            <TextField
-                label="Email"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                autoComplete={true}
-                type="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value) }}
-                disabled={disabled}
-            />
-            <TextField
-                label="Password"
-                variant="filled"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                autoComplete={true}
-                type="password"
-                value={password}
-                onChange={(e) => { setPassword(e.target.value) }}
-                disabled={disabled}
-                onKeyDown={(e) => e.key === 'Enter' && submit()}
-            />
-            <LoadingButton
-                variant="contained"
-                size="large"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                children="Login"
-                onClick={submit}
-                disabled={disabled}
-                loading={loading}
-            />
-            <Button
-                component={LinkRoute}
-                to="/auth/signup"
-                size="small"
-                sx={{ marginTop: (theme) => theme.spacing(2) }}
-                children="Create account"
-                disabled={disabled}
-            />
-        </div>
+        <Card sx={{ width: 300, padding: 7, margin: "50px auto" }}>
+            <Grid container direction="column">
+                <Logo />
+                <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Sign in</Typography>
+                <TextField
+                    label="Email"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    autoComplete={true}
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value) }}
+                    disabled={disabled}
+                />
+                <TextField
+                    label="Password"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    autoComplete={true}
+                    type="password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value) }}
+                    disabled={disabled}
+                    onKeyDown={(e) => e.key === 'Enter' && submit()}
+                />
+                <LoadingButton
+                    variant="contained"
+                    size="large"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    children="Login"
+                    onClick={submit}
+                    disabled={disabled}
+                    loading={loading}
+                />
+                <Button
+                    component={LinkRoute}
+                    to="/auth/signup"
+                    size="small"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    children="Create account"
+                    disabled={disabled}
+                />
+            </Grid>
+        </Card>
     );
 
 
