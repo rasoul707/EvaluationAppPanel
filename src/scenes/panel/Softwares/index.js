@@ -3,7 +3,6 @@ import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import ButtonBase from '@mui/material/ButtonBase';
 import Button from '@mui/material/Button';
 
 import Dialog from '@mui/material/Dialog';
@@ -21,7 +20,6 @@ import AddIcon from '@mui/icons-material/Add';
 
 import { Link as LinkRoute } from "react-router-dom"
 
-import immggg from "../../../static/img/login2.png"
 
 import * as api from "../../../api";
 import { useSnackbar } from 'notistack';
