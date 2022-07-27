@@ -1,29 +1,30 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useParams, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useSnackbar } from 'notistack';
 
 import validex from 'validex'
 
 
-import { Grid, Card, Fab } from '@mui/material';
-import { LoadingButton } from '@mui/lab'
+import { Card, } from '@mui/material';
 
-import CheckIcon from '@mui/icons-material/Check';
-
-
-import * as api from "../../../api";
+import * as API from "../../../api";
 
 import SoftwareForm from "./SoftwareForm"
-import EvaluationsForm from "./EvaluationsForm"
+
+import Layout from "../../../components/Layout"
 
 
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 export default function NewSoftware() {
 
     const params = useParams()
-    const user = useSelector(state => state.auth.user)
     const history = useHistory()
 
 
@@ -32,13 +33,13 @@ export default function NewSoftware() {
     const isNew = params.softID === 'new'
     const softID = !isNew ? parseInt(params.softID) : null
 
-
+    const [openRemoveDig, setOpenRemoveDig] = React.useState(false)
 
 
     const [disabled, setDisabled] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
-
+    const [ID, setID] = React.useState(null);
     const [name, setName] = React.useState('');
     const [area, setArea] = React.useState("none");
     const [downloadLink, setDownloadLink] = React.useState('');
@@ -50,50 +51,30 @@ export default function NewSoftware() {
 
     const getSoftware = async () => {
         try {
-            const response = await api.getSoftware(softID)
+            const response = await API.GET()(`software/${softID}/`)
             const m = response.data
-            setName(m.software_name)
-            setArea(m.area.id)
+            setID(m.id)
+            setName(m.name)
+            setArea(m.area_id)
             setDownloadLink(m.download_link)
             setDescription(m.description)
-            setImage(m.image)
+            setImage(m.logo)
         } catch (error) {
-            enqueueSnackbar("[getSoftware]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
-            // history.replace("/softwares")
+            setID(0)
+            API.ResponseError(enqueueSnackbar, error)
+            history.replace("/softwares")
         }
     }
 
 
     const getAreasList = async () => {
         try {
-            const response = await api.getApplicationAreaList()
+            const response = await API.GET()('software/area/')
             setAreaList(response.data)
         } catch (error) {
-            enqueueSnackbar("[getApplicationAreaList]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            API.ResponseError(enqueueSnackbar, error)
         }
     }
-
-    React.useEffect(() => {
-        const data = async () => {
-            setDisabled(true)
-
-            if (!isNew) {
-                await getAreasList()
-                await getSoftware()
-            }
-            else {
-                setName('')
-                setArea("none")
-                setDownloadLink('')
-                setDescription('')
-                setImage(null)
-                await getAreasList()
-            }
-            setDisabled(false)
-        }
-        data()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params])
 
 
     const submit = async () => {
@@ -101,16 +82,15 @@ export default function NewSoftware() {
 
         // validations
         const data = {
-            software_name: name,
+            name: name,
             download_link: downloadLink,
             area_id: area,
             description,
-            image_id: image?.id,
-            user: user
+            logo_id: image?.id
         }
         const schema = {
-            software_name: {
-                nameAlias: "Software name",
+            name: {
+                nameAlias: "Name",
                 required: true,
                 type: 'string',
                 min: 3,
@@ -131,7 +111,7 @@ export default function NewSoftware() {
                 type: 'string',
                 min: 50,
             },
-            image_id: {
+            logo_id: {
                 nameAlias: "Image",
                 required: true,
                 type: 'number',
@@ -153,7 +133,7 @@ export default function NewSoftware() {
         setLoading(true)
 
         try {
-            const responseCheck = await api.getSoftwaresList(`created_by=&software_name=${name}`)
+            const responseCheck = await API.GET()(`software/?created_by=&name=${name}`)
             let sameName = true
             if (!isNew) {
                 responseCheck.data.map((v, ii) => {
@@ -167,21 +147,21 @@ export default function NewSoftware() {
             } else {
                 let res
                 if (!isNew) {
-                    res = await api.editSoftware(softID, data)
+                    res = await API.PATCH()(`software/${softID}/`, data)
                     enqueueSnackbar("Your software updated successfully", { variant: 'success' })
                 } else {
-                    res = await api.newSoftware(data)
+                    res = await API.POST()(`software/`, data)
                     enqueueSnackbar("Your software added successfully", { variant: 'success' })
                 }
 
-                await submitEvaluations(res.data.id)
+                // await submitEvaluations(res.data.id)
                 history.push(`/softwares/` + res.data.id)
             }
 
 
 
         } catch (error) {
-            enqueueSnackbar("[newSoftware]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            API.ResponseError(enqueueSnackbar, error)
         }
 
         setDisabled(false)
@@ -210,12 +190,12 @@ export default function NewSoftware() {
                     console.log(progressEvent.loaded)
                 }
             }
-            const response = await api.uploadImage(formData, config)
+            const response = await API.POST(true, config)('upload/image/', formData)
             closeSnackbar(uploadingSnackKey)
             enqueueSnackbar("Image uploaded successfully", { variant: 'success' })
             setImage(response.data)
         } catch (error) {
-            enqueueSnackbar("[uploadImage]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            API.ResponseError(enqueueSnackbar, error)
         }
 
         setLoading(false)
@@ -223,146 +203,102 @@ export default function NewSoftware() {
     }
 
 
+    const performDate = async () => {
+        if (!isNew && ID === softID) return
 
 
-    const [metricForm, setMetricForm] = React.useState([])
-    const [commentForm, setCommentForm] = React.useState([])
-    const [ratingForm, setRatingForm] = React.useState([])
-    const [compareForm, setCompareForm] = React.useState([])
-    const [questionnaireForm, setQuestionnaireForm] = React.useState([])
+        setDisabled(true)
 
-    const submitEvaluations = async (softwareID) => {
-
-        // metricForm
-        metricForm.map(async val => {
-            const data = { software: softwareID, ...val }
-            try {
-                if (val.id) {
-                    await api.editMetricEvaluate(val.id, data)
-                }
-                else {
-                    await api.newMetricEvaluate(data)
-                }
-            } catch (error) {
-                enqueueSnackbar("[metricForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
-            }
-        })
-
-        // commentForm
-        commentForm.map(async val => {
-            const data = { software: softwareID, ...val }
-            try {
-                if (val.id) {
-                    await api.editCommentEvaluate(val.id, data)
-                }
-                else {
-                    await api.newCommentEvaluate(data)
-                }
-            } catch (error) {
-                enqueueSnackbar("[commentForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
-            }
-        })
-
-        // ratingForm
-        ratingForm.map(async val => {
-            const data = { software: softwareID, ...val }
-            try {
-                if (val.id) {
-                    await api.editRatingEvaluate(val.id, data)
-                }
-                else {
-                    await api.newRatingEvaluate(data)
-                }
-            } catch (error) {
-                enqueueSnackbar("[ratingForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
-            }
-        })
-
-        // compareForm
-        compareForm.map(async val => {
-            const data = { software: softwareID, ...val }
-            try {
-                if (val.id) {
-                    await api.editCompareEvaluate(val.id, data)
-                }
-                else {
-                    await api.newCompareEvaluate(data)
-                }
-            } catch (error) {
-                enqueueSnackbar("[compareForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
-            }
-        })
-
-
-        // questionnaireForm
-        questionnaireForm.map(async val => {
-            const data = { software: softwareID, ...val }
-            try {
-                if (val.id) {
-                    await api.editQuestionnaireEvaluate(val.id, data)
-                }
-                else {
-                    await api.newQuestionnaireEvaluate(data)
-                }
-            } catch (error) {
-                enqueueSnackbar("[questionnaireForm]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
-            }
-        })
-
-
+        if (!isNew) {
+            await getAreasList()
+            await getSoftware()
+        }
+        else {
+            await getAreasList()
+            setName('')
+            setArea("none")
+            setDownloadLink('')
+            setDescription('')
+            setImage(null)
+        }
+        setDisabled(false)
     }
 
-    return <>
-        <Grid container spacing={2}>
-            <Grid item md={6} xs={12}>
-                <Card>
-                    <SoftwareForm
-                        {...{
-                            isNew,
-                            disabled,
-                            areaList,
-                            name, setName,
-                            area, setArea,
-                            downloadLink, setDownloadLink,
-                            description, setDescription,
-                            image, setImage,
-                            handleUploadImage
-                        }}
-                    />
-                </Card>
-            </Grid>
-            <Grid item md={6} xs={12}>
-                <EvaluationsForm
-                    {...{
-                        isNew, softID, area,
-                        metricForm, setMetricForm,
-                        commentForm, setCommentForm,
-                        ratingForm, setRatingForm,
-                        compareForm, setCompareForm,
-                        questionnaireForm, setQuestionnaireForm,
-                    }}
+
+    const closeDialog = () => setOpenRemoveDig(false)
+    const removeSoftware = async () => {
+        const softwareID = softID;
+        closeDialog()
+        try {
+            await API.DELETE()(`software/${softwareID}/`)
+            enqueueSnackbar("Deleted successfully", { variant: 'success' })
+        } catch (error) {
+            API.ResponseError(enqueueSnackbar, error)
+        }
+        history.replace("/softwares")
+    }
+
+    const handleRemove = () => {
+        setOpenRemoveDig(true)
+    }
+
+    React.useEffect(() => {
+        performDate()
+    }, [params])
+
+
+
+
+
+
+
+    return <Layout>
+        <Card>
+            <SoftwareForm
+                {...{
+                    isNew,
+                    disabled,
+                    loading,
+                    submit,
+                    areaList,
+                    name, setName,
+                    area, setArea,
+                    downloadLink, setDownloadLink,
+                    description, setDescription,
+                    image, setImage,
+                    handleUploadImage,
+                    handleRemove,
+                }}
+            />
+            {isNew ||
+                <RemoveSoftwareDialog
+                    removeID={openRemoveDig ? softID : false}
+                    closeDialog={closeDialog}
+                    removeSoftware={removeSoftware}
                 />
-            </Grid>
-        </Grid>
+            }
+        </Card>
 
-        <Fab
-            color="primary"
-            aria-label="add"
-            variant="extended"
-            size="large"
-            sx={{
-                position: "fixed",
-                bottom: (theme) => theme.spacing(2),
-                right: (theme) => theme.spacing(2)
-            }}
-            onClick={submit}
-            disabled={disabled}
-            loading={loading}
-            component={LoadingButton}
-        >
-            {!loading ? [<CheckIcon sx={{ mr: 1 }} />, "Submit"] : null}
-        </Fab>
+    </Layout>
+}
 
 
-    </>
+const RemoveSoftwareDialog = ({ removeID, closeDialog, removeSoftware }) => {
+    return <Dialog
+        open={removeID}
+        onClose={closeDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">Remove Software</DialogTitle>
+        <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+                Are you sure you want to do this?
+            </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={closeDialog} color="info">No</Button>
+            <Button onClick={removeSoftware} color="error" autoFocus>Yes! I'm sure</Button>
+        </DialogActions>
+    </Dialog>
 }

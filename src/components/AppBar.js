@@ -26,7 +26,7 @@ import SoftsIcon from '@mui/icons-material/Edit';
 import EvaluationIcon from '@mui/icons-material/Reviews';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
-
+import * as API from "../api"
 
 const pages = [
     { title: 'New Software', icon: <NewSoftIcon />, url: '/softwares/new' },
@@ -58,9 +58,10 @@ const ResponsiveAppBar = () => {
         setAnchorElUser(null);
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await API.POST(true)('auth/logout/')
         localStorage.clear()
-        window.location.reload();
+        window.location.reload()
     }
 
 
@@ -172,7 +173,10 @@ const ResponsiveAppBar = () => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Profile">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt={user.first_name + ' ' + user.last_name} src="/no-avatar" />
+                                <Avatar
+                                    alt={user.first_name + ' ' + user.last_name}
+                                    src={user.avatar?.medium ?? "/no-avatar"}
+                                />
                             </IconButton>
 
                         </Tooltip>
@@ -215,13 +219,17 @@ const ResponsiveAppBar = () => {
                                 component={LinkRoute}
                                 to={"/profile"}
                             >
-                                <Avatar alt={user.first_name + ' ' + user.last_name} src="/no-avatar" />
+                                <Avatar
+                                    alt={user.first_name + ' ' + user.last_name}
+                                    src={user.avatar?.medium ?? "/no-avatar"}
+                                />
                                 {user.first_name + ' ' + user.last_name}
                             </MenuItem>
                             <Divider />
                             <MenuItem
                                 component={LinkRoute}
                                 to={"/settings"}
+                                disabled
                             >
                                 <ListItemIcon>
                                     <SettingsIcon fontSize="small" />

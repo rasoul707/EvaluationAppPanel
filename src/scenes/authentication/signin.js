@@ -1,9 +1,10 @@
+import * as React from "react"
 import { TextField, Button, Typography, Grid, Card } from "@mui/material"
 import { LoadingButton } from '@mui/lab'
 import { Link as LinkRoute } from "react-router-dom"
 import { useState } from "react";
-import Logo from "../../components/_Logo"
-import * as api from "../../api";
+import Logo from "../../components/Logo"
+import * as API from "../../api";
 import { useSnackbar } from 'notistack';
 import validex from 'validex'
 
@@ -11,6 +12,7 @@ import validex from 'validex'
 const SignIn = () => {
 
     const { enqueueSnackbar } = useSnackbar()
+
 
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -38,8 +40,7 @@ const SignIn = () => {
             password: {
                 nameAlias: "Password",
                 required: true,
-                type: 'string',
-                mediumPassword: true
+                type: 'string'
             },
         }
 
@@ -48,20 +49,18 @@ const SignIn = () => {
 
         if (!isValidate) {
             const errors = validator.getError()
-            Object.values(errors).reverse().map((errorText) => {
-                return enqueueSnackbar(errorText, { variant: "error" })
-            })
-            return
+            return enqueueSnackbar(Object.values(errors)[0], { variant: "error" })
         }
 
         setDisabled(true)
         setLoading(true)
 
         try {
-            const response = await api.signIn(data)
+            const response = await API.POST(false)('auth/login/', data)
             setLoading(false)
 
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("access_token", response.data.access_token);
+            localStorage.setItem("refresh_token", response.data.refresh_token);
             enqueueSnackbar("Welcome :) Please wait...", { variant: 'success' })
 
             setTimeout(() => {
@@ -69,7 +68,7 @@ const SignIn = () => {
             }, 1000)
 
         } catch (error) {
-            enqueueSnackbar("[signIn]: ".toUpperCase() + JSON.stringify(error?.data?.message), { variant: 'error' })
+            API.ResponseError(enqueueSnackbar, error)
             setDisabled(false)
             setLoading(false)
         }
@@ -77,7 +76,7 @@ const SignIn = () => {
     }
 
     return (
-        <Card sx={{ width: 300, padding: 7, margin: "50px auto" }}>
+        <Card sx={{ maxWidth: 300, padding: 7, margin: "50px auto" }}>
             <Grid container direction="column">
                 <Logo />
                 <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Sign in</Typography>
@@ -85,7 +84,7 @@ const SignIn = () => {
                     label="Email"
                     variant="filled"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    autoComplete={true}
+                    autoComplete="true"
                     type="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value) }}
@@ -95,7 +94,7 @@ const SignIn = () => {
                     label="Password"
                     variant="filled"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    autoComplete={true}
+                    autoComplete="true"
                     type="password"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value) }}

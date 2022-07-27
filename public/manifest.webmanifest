@@ -1,0 +1,42 @@
+{
+  "id": "software-evaluation",
+  "short_name": "Software Evaluation",
+  "name": "Software Evaluation",
+  "description": "Evaluate Softwares ...",
+  "icons": [
+    {
+      "src": "logo192masked.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logo512masked.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#009688",
+  "orientation": "portrait",
+  "scope": ".",
+  "background_color": "#ffffff",
+  "shortcuts": []
+}

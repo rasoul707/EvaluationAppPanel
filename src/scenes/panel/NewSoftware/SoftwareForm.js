@@ -1,5 +1,5 @@
-import { Select, MenuItem, FormControl, InputLabel, Box, Grid, IconButton, Avatar, CardContent, Typography, TextField } from '@mui/material';
-
+import { Select, MenuItem, FormControl, InputLabel, Box, Grid, IconButton, Button, Avatar, CardContent, Typography, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab'
 import { deepOrange } from '@mui/material/colors';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -9,16 +9,21 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
+
+
 export default function SoftwareForm({
     isNew,
     disabled,
+    loading,
+    submit,
     areaList,
     name, setName,
     area, setArea,
     downloadLink, setDownloadLink,
     description, setDescription,
     image, setImage,
-    handleUploadImage
+    handleUploadImage,
+    handleRemove
 }) {
     const sxicons = { color: '#0277bd', mr: 1, my: 0.5 }
     const sxbox = { display: 'flex', alignItems: 'flex-end', marginTop: (theme) => theme.spacing(2) }
@@ -60,11 +65,11 @@ export default function SoftwareForm({
                             label="Area"
                             value={areaList.length === 0 ? "none" : area}
                             onChange={(e) => { setArea(e.target.value) }}
-                            disabled={disabled || !isNew}
+                            disabled={disabled}
                         // autoFocus
                         >
                             <MenuItem value="none" disabled><em>None</em></MenuItem>
-                            {areaList.map(({ id, area_name }) => <MenuItem value={id}>{area_name}</MenuItem>)}
+                            {areaList.map(({ id, name }) => <MenuItem value={id}>{name}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </Box>
@@ -95,8 +100,32 @@ export default function SoftwareForm({
                         value={description}
                         onChange={(e) => { setDescription(e.target.value) }}
                         disabled={disabled}
-
                     />
+                </Box>
+
+                <Box sx={sxbox}>
+                    <LoadingButton
+                        sx={{ mr: .5 }}
+                        color="primary"
+                        aria-label="add"
+                        variant="contained"
+                        size="large"
+                        disabled={disabled}
+                        loading={loading}
+                        children={"Submit"}
+                        onClick={submit}
+                    />
+                    {isNew || <Button
+                        sx={{ ml: .5 }}
+                        color="error"
+                        aria-label="remove"
+                        variant="contained"
+                        size="large"
+                        disabled={disabled}
+                        loading={loading}
+                        children={"remove"}
+                        onClick={handleRemove}
+                    />}
                 </Box>
 
             </CardContent>
@@ -121,9 +150,10 @@ export default function SoftwareForm({
                     <Grid container direction="column">
                         <Avatar
                             alt={name.toUpperCase()}
-                            src={image.medium}
+                            src={image?.medium}
                             sx={{ width: 75, height: 75 }}
                             variant="rounded"
+                            children={"No Photo"}
                         />
                         <Grid container direction="row" justifyContent="space-between">
                             <IconButton color='error' onClick={() => setImage(null)} disabled={disabled}>
