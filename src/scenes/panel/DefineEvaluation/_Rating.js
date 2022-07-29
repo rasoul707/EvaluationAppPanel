@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 import { useSnackbar } from 'notistack';
-import { Grid, CircularProgress, TextField, Switch, Divider, IconButton, } from '@mui/material';
+import { Grid, CircularProgress, TextField, Switch, Divider, IconButton, FormHelperText } from '@mui/material';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
@@ -106,7 +106,7 @@ const Item = ({ data, remove, isActive, active, set, disabled, variables }) => {
                         return option.title;
                     }}
                     renderInput={(params) => (
-                        <TextField {...params} label="Sections" placeholder="Sections" />
+                        <TextField {...params} label="Section" placeholder="Select or type" />
                     )}
                     filterOptions={(options, params) => {
                         const filtered = filter(options, params);
@@ -127,6 +127,7 @@ const Item = ({ data, remove, isActive, active, set, disabled, variables }) => {
                     disableClearable
                     freeSolo
                 />
+                <FormHelperText>Select or type</FormHelperText>
             </Grid>
 
             {FixItems}
@@ -183,7 +184,7 @@ const Form = ({ softID, data, set, disabled, variables }) => {
         if (sync) {
             const { id } = data[index]
             try {
-                await API.PATCH()(`${path}/${id}/`, { [key]: val })
+                await API.PATCH()(`${path}/${id}/`, _data)
             } catch (error) {
                 API.ResponseError(enqueueSnackbar, error)
                 set(prevData)

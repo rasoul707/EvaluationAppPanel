@@ -181,14 +181,17 @@ const SignUp = () => {
                     value={username}
                     onChange={(e) => { setUsername(e.target.value) }}
                     disabled={disabled}
+                    autoComplete="false"
                 />
                 <TextField
                     label="Email"
                     variant="filled"
+
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
                     value={email}
                     onChange={(e) => { setEmail(e.target.value) }}
                     disabled={disabled}
+                    autoComplete="false"
                 />
 
 
@@ -200,9 +203,11 @@ const SignUp = () => {
                     InputProps={{
                         startAdornment: <InputAdornment position="start">+98</InputAdornment>,
                     }}
+                    type="tel"
                     value={phoneNumber}
                     onChange={(e) => { setPhoneNumber(e.target.value) }}
                     disabled={disabled}
+                    autoComplete="false"
                 />
 
                 <TextField
@@ -210,9 +215,11 @@ const SignUp = () => {
                     variant="filled"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
                     type="password"
+
                     value={password}
                     onChange={(e) => { setPassword(e.target.value) }}
                     disabled={disabled}
+                    autoComplete="false"
                 />
 
                 <FormControlLabel

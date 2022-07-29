@@ -97,10 +97,7 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             </Grid>
 
             <Grid item xs={12} sm container>
-
                 <Grid item xs container direction="column" spacing={2} >
-
-
 
                     <Grid item xs>
                         <Typography gutterBottom variant="h6" component="div">
@@ -111,6 +108,15 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
                                 data.name
                             }
                         </Typography>
+                        <Typography gutterBottom variant="body2">
+                            {isLoading
+                                ?
+                                <Skeleton animation="wave" variant='text' />
+                                :
+                                "Area: " + data.area?.name
+                            }
+                        </Typography>
+
                         <Typography gutterBottom variant="body2">
                             {isLoading
                                 ?

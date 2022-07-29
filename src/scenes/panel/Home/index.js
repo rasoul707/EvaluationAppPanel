@@ -5,15 +5,9 @@ import React from "react"
 import SoftwareItem from "../../../components/SoftwareItem"
 import * as API from "../../../api";
 import { useSnackbar } from 'notistack';
-
-
-import { Link as LinkRoute } from "react-router-dom"
-
-
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
-
+import Layout from "../../../components/Layout"
 
 
 const Page = () => {
@@ -63,14 +57,15 @@ const Page = () => {
         ))}
         {!loading && softwares.length === 0
             ?
-            <Grid item lg={12} key={0}>
-                <Alert
-                    variant='standard'
-                    children="You have not active software"
-                    severity="warning"
-                    action={<Button color="inherit" size="small" component={LinkRoute} to={"/softwares/new"}>Add</Button>}
-                />
-            </Grid>
+            <Layout>
+                <Grid item lg={12} key={0}>
+                    <Alert
+                        variant='standard'
+                        children="No software found"
+                        severity="warning"
+                    />
+                </Grid>
+            </Layout>
             : null
         }
     </Grid>

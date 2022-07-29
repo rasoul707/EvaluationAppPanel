@@ -56,7 +56,7 @@ const Panel = () => {
                 <Route path="/settings" exact component={Settings} />
                 <Route path="/profile" exact component={Profile} />
 
-                <Route path="/" component={Home} />
+                <Route path="/" exact component={Home} />
 
                 <Redirect to="/" />
             </Switch>

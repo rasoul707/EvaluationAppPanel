@@ -151,7 +151,7 @@ const Form = ({ softID, data, set, disabled, variables }) => {
         if (sync) {
             const { id } = data[index]
             try {
-                await API.PATCH()(`${path}/${id}/`, { [key]: val })
+                await API.PATCH()(`${path}/${id}/`, _data)
             } catch (error) {
                 API.ResponseError(enqueueSnackbar, error)
                 set(prevData)

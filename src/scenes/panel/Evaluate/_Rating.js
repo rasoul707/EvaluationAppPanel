@@ -4,15 +4,31 @@ import * as React from 'react';
 
 
 import { useSnackbar } from 'notistack';
-import { Grid, Divider, Typography, Rating } from '@mui/material';
+import { Grid, Divider, Typography, Rating, Box, } from '@mui/material';
 import * as API from "../../../api";
 
 
+const labels = {
+    0.5: 'Useless',
+    1: 'Useless+',
+    1.5: 'Poor',
+    2: 'Poor+',
+    2.5: 'Ok',
+    3: 'Ok+',
+    3.5: 'Good',
+    4: 'Good+',
+    4.5: 'Excellent',
+    5: 'Excellent+',
+};
 
+function getLabelText(value) {
+    return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
+}
 
 const Item = ({ data, setUserData, disabled }) => {
 
     const user_data = data.user_data
+    const [hover, setHover] = React.useState(-1);
 
 
     return <>
@@ -25,11 +41,21 @@ const Item = ({ data, setUserData, disabled }) => {
             </Grid>
 
             <Grid item xs={8}>
-                <Rating
-                    max={10}
-                    value={user_data?.rating}
-                    onChange={(e) => { setUserData(e.target.value, true) }}
-                />
+                <Grid container>
+                    <Rating
+                        max={5}
+                        value={user_data?.rating / 2}
+                        onChange={(e) => { setUserData(e.target.value * 2, true) }}
+                        precision={0.5}
+                        getLabelText={getLabelText}
+                        onChangeActive={(event, newHover) => {
+                            setHover(newHover);
+                        }}
+                    />
+                    {user_data?.rating !== null && (
+                        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : user_data?.rating / 2]}</Box>
+                    )}
+                </Grid>
             </Grid>
 
         </Grid >

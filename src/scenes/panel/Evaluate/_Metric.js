@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 import { useSnackbar } from 'notistack';
-import { Grid, Divider, Typography, Slider } from '@mui/material';
+import { Grid, Divider, Typography, Slider, Box } from '@mui/material';
 
 
 
@@ -44,18 +44,24 @@ const Item = ({ data, setUserData, disabled }) => {
                                     {title}
                                 </Grid>
                                 <Grid item x={12}>
-                                    <Slider
-                                        step={1}
-                                        marks
-                                        min={0}
-                                        max={10}
-                                        valueLabelDisplay="auto"
-                                        value={user_data[id]?.value}
-                                        onChange={(e) => setUserData(id, e.target.value, false)}
-                                        sx={{ minWidth: 150, width: 250 }}
-                                        disabled={disabled}
-                                        onChangeCommitted={(e, value) => setUserData(id, value, true)}
-                                    />
+                                    <Grid container>
+                                        <Slider
+                                            step={1}
+                                            marks
+                                            min={0}
+                                            max={10}
+                                            valueLabelDisplay="auto"
+                                            value={user_data[id]?.value}
+                                            onChange={(e) => setUserData(id, e.target.value, false)}
+                                            sx={{ minWidth: 150, width: 250 }}
+                                            disabled={disabled}
+                                            onChangeCommitted={(e, value) => setUserData(id, value, true)}
+                                        />
+                                        {user_data[id]?.value !== null && (
+                                            <Box sx={{ ml: 2 }}>{user_data[id]?.value}</Box>
+                                        )}
+                                    </Grid>
+
                                 </Grid>
                             </Grid>
                         </Grid>

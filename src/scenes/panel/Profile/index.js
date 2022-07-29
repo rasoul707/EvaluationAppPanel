@@ -4,7 +4,7 @@ import * as React from 'react';
 import Layout from "../../../components/Layout"
 import Grid from '@mui/material/Grid';
 import EditProfile from './EditProfile';
-
+import Notification from './Notification';
 
 const Profile = () => {
 
@@ -19,6 +19,9 @@ const Profile = () => {
         >
             <Grid item xs={12}>
                 <EditProfile {...{ disabled, loading, setDisabled, setLoading }} />
+            </Grid>
+            <Grid item xs={12}>
+                <Notification {...{ disabled, loading, setDisabled, setLoading }} />
             </Grid>
         </Grid>
     </Layout>

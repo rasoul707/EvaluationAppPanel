@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 import { useSnackbar } from 'notistack';
-import { Grid, FormControl, InputLabel, Select, MenuItem, CircularProgress, TextField, Switch, Divider, IconButton, Autocomplete } from '@mui/material';
+import { Grid, FormControl, InputLabel, Select, MenuItem, CircularProgress, TextField, Switch, Divider, IconButton, Autocomplete, Checkbox } from '@mui/material';
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
@@ -53,6 +53,8 @@ const Item = ({ data, remove, isActive, active, set, disabled, variables }) => {
             </IconButton>
         </Grid>
     ]
+
+    const paramLength = variables?.metricsParametersList[data.category]?.length
 
 
     const nn = variables?.targetSoftwareList.map(({ id }) => id)
@@ -105,12 +107,16 @@ const Item = ({ data, remove, isActive, active, set, disabled, variables }) => {
                     <InputLabel>Parameters</InputLabel>
                     <Select
                         label="Parameters"
-                        value={variables?.metricsParametersList[data.category]?.length === 0 ? ["none"] : data.parameters}
+                        value={paramLength === 0 ? ["none"] : data.parameters}
                         onChange={(e) => _set('parameters', e.target.value)}
                         disabled={disabled || !data.is_active || removeLoading}
                         multiple
                     >
                         <MenuItem value="none" disabled><em>None</em></MenuItem>
+                        <MenuItem value="all" divider autoFocused >
+                            <Checkbox checked={paramLength > 0 && paramLength === data.parameters.length} sx={{ p: .5, pr: 1 }} />
+                            <b>Select all</b>
+                        </MenuItem>
                         {variables?.metricsParametersList[data.category]?.map(({ id, title }) => {
                             return <MenuItem value={id}>{title}</MenuItem>
                         })}
@@ -170,19 +176,24 @@ const Form = ({ softID, data, set, disabled, variables }) => {
         if (key === 'category') {
             _data['parameters'] = []
         }
+        if (key === 'parameters' && val.includes('all')) {
+            const params = variables?.metricsParametersList[data[index].category]
+            if (val.length - 1 === params?.length) {
+                _data['parameters'] = []
+            }
+            else _data['parameters'] = params?.map(({ id }) => id)
+        }
         let items = [...data]
         let prevData = [...items]
-        console.log(prevData)
         items[index] = { ...items[index], ..._data }
         set(items)
         if (sync) {
             const { id } = data[index]
             try {
-                await API.PATCH()(`${path}/${id}/`, { [key]: val })
+                await API.PATCH()(`${path}/${id}/`, _data)
             } catch (error) {
                 API.ResponseError(enqueueSnackbar, error)
                 set(prevData)
-                console.log(prevData)
             }
         }
     }
