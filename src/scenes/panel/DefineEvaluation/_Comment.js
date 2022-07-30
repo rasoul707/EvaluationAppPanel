@@ -80,12 +80,12 @@ const Item = ({ data, remove, isActive, active, set, disabled, variables }) => {
                         const old = data.section
                         // by enter
                         if (typeof newValue === 'string') {
-                            set('section', { title: newValue })
+                            set('section', { title: newValue }, false)
                             newSection(newValue, old)
                         }
                         // by click
                         else if (newValue && newValue.isNew) {
-                            set('section', { title: newValue.value })
+                            set('section', { title: newValue.value }, false)
                             newSection(newValue.value, old)
                         }
                         // regular

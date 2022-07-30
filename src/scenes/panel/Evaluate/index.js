@@ -25,8 +25,8 @@ import * as API from "../../../api";
 import MetricForm from "./_Metric"
 import CommentForm from "./_Comment"
 import RatingForm from "./_Rating"
-// import CompareForm from "./_Compare"
-// import QuestionnaireForm from "./_Questionnaire"
+import CompareForm from "./_Compare"
+import QuestionnaireForm from "./_Questionnaire"
 
 export default function Evaluation() {
 
@@ -78,8 +78,8 @@ export default function Evaluation() {
         await getMetricsItems()
         await getCommentsItems()
         await getRatingsItems()
-        // await getComparesItems()
-        // await getQuestionnairesItems()
+        await getComparesItems()
+        await getQuestionnairesItems()
         setDisabled(false)
         setInitial(false)
     }
@@ -198,30 +198,20 @@ export default function Evaluation() {
         </TabPanel>
 
         <TabPanel value={activeTab} index={3} disabled={disabled}>
-            {/* <CompareForm
-                softID={softID}
+            <CompareForm
                 data={compareData}
                 set={setCompareData}
                 disabled={disabled}
-                variables={{
-                    metricsCategoriesList,
-                    metricsParametersList,
-                    targetSoftwareList,
-                }}
-            /> */}
+            />
         </TabPanel>
 
         <TabPanel value={activeTab} index={4} disabled={disabled}>
-            {/* <QuestionnaireForm
-                softID={softID}
+            <QuestionnaireForm
                 data={questionnaireData}
                 set={setQuestionnaireData}
                 disabled={disabled}
-                variables={{
-                    questionnairesCategoriesList,
-                    questionnairesParametersList,
-                }}
-            /> */}
+            />
+
         </TabPanel>
     </Card>
 
