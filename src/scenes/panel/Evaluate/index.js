@@ -166,11 +166,11 @@ export default function Evaluation() {
             sx={{ borderColor: 'divider', borderWidth: 1 }}
             allowScrollButtonsMobile
         >
-            <Tab label="Metric" disabled={disabled} />
-            <Tab label="Comment" disabled={disabled} />
-            <Tab label="Rating" disabled={disabled} />
-            <Tab label="Compare" disabled={disabled} />
-            <Tab label="Questionnaire" disabled={disabled} />
+            {softData?.evaluations?.includes('metric') && <Tab label="Metric" disabled={disabled} />}
+            {softData?.evaluations?.includes('comment') && <Tab label="Comment" disabled={disabled} />}
+            {softData?.evaluations?.includes('rating') && <Tab label="Rating" disabled={disabled} />}
+            {softData?.evaluations?.includes('compare') && <Tab label="Compare" disabled={disabled} />}
+            {softData?.evaluations?.includes('questionnaire') && <Tab label="Questionnaire" disabled={disabled} />}
         </Tabs>
 
         <TabPanel value={activeTab} index={0} disabled={disabled}>

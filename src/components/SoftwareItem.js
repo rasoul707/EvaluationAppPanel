@@ -117,12 +117,12 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
                             }
                         </Typography>
 
-                        <Typography gutterBottom variant="body2">
+                        <Typography gutterBottom variant="subtitle2" sx={{ height: 40 }}>
                             {isLoading
                                 ?
                                 <Skeleton animation="wave" variant='text' />
                                 :
-                                "Area: " + data.area?.name
+                                data.evaluations.length === 0 ? "-" : data.evaluations.join(", ")
                             }
                         </Typography>
                     </Grid>
