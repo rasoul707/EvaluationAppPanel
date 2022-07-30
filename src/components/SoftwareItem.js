@@ -122,7 +122,7 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
                                 ?
                                 <Skeleton animation="wave" variant='text' />
                                 :
-                                data.evaluations.length === 0 ? "-" : data.evaluations.join(", ")
+                                data.evaluations?.length === 0 ? "-" : data.evaluations?.join(", ")
                             }
                         </Typography>
                     </Grid>
