@@ -58,7 +58,7 @@ export default function Evaluation() {
             setSoftData(response.data)
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)
-            history.replace("/softwares")
+            history.replace("/")
         }
     }
 
@@ -173,46 +173,45 @@ export default function Evaluation() {
             {softData?.evaluations?.includes('questionnaire') && <Tab label="Questionnaire" disabled={disabled} />}
         </Tabs>
 
-        <TabPanel value={activeTab} index={0} disabled={disabled}>
+        {softData?.evaluations?.includes('metric') && <TabPanel value={activeTab} index={0} disabled={disabled}>
             <MetricForm
                 data={metricData}
                 set={setMetricData}
                 disabled={disabled}
             />
-        </TabPanel>
+        </TabPanel>}
 
-        <TabPanel value={activeTab} index={1} disabled={disabled}>
+        {softData?.evaluations?.includes('comment') && <TabPanel value={activeTab} index={1} disabled={disabled}>
             <CommentForm
                 data={commentData}
                 set={setCommentData}
                 disabled={disabled}
             />
-        </TabPanel>
+        </TabPanel>}
 
-        <TabPanel value={activeTab} index={2} disabled={disabled}>
+        {softData?.evaluations?.includes('rating') && <TabPanel value={activeTab} index={2} disabled={disabled}>
             <RatingForm
                 data={ratingData}
                 set={setRatingData}
                 disabled={disabled}
             />
-        </TabPanel>
+        </TabPanel>}
 
-        <TabPanel value={activeTab} index={3} disabled={disabled}>
+        {softData?.evaluations?.includes('compare') && <TabPanel value={activeTab} index={3} disabled={disabled}>
             <CompareForm
                 data={compareData}
                 set={setCompareData}
                 disabled={disabled}
             />
-        </TabPanel>
+        </TabPanel>}
 
-        <TabPanel value={activeTab} index={4} disabled={disabled}>
+        {softData?.evaluations?.includes('questionnaire') && <TabPanel value={activeTab} index={4} disabled={disabled}>
             <QuestionnaireForm
                 data={questionnaireData}
                 set={setQuestionnaireData}
                 disabled={disabled}
             />
-
-        </TabPanel>
+        </TabPanel>}
     </Card>
 
     const loading = <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 30 }}>

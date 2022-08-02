@@ -7,6 +7,9 @@ import store from './redux/store';
 import { SnackbarProvider } from 'notistack';
 import * as serviceWorker from './serviceWorker';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
 
 
 const theme = createTheme({
@@ -25,7 +28,9 @@ ReactDOM.render(
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <SnackbarProvider maxSnack={5}>
-          <App />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <App />
+          </LocalizationProvider>
         </SnackbarProvider>
       </ThemeProvider>
     </Provider>

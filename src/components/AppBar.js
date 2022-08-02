@@ -18,6 +18,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import Badge from '@mui/material/Badge';
+
 
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoIcon from '@mui/icons-material/TableChart';
@@ -26,6 +28,8 @@ import SoftsIcon from '@mui/icons-material/Edit';
 import EvaluationIcon from '@mui/icons-material/Reviews';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+
 import * as API from "../api"
 
 const pages = [
@@ -171,15 +175,28 @@ const ResponsiveAppBar = () => {
 
                     {/* right menu */}
                     <Box sx={{ flexGrow: 0 }}>
+                        <Tooltip title="Notifications">
+                            <IconButton
+                                color="inherit"
+                            >
+                                <Badge badgeContent={0} color="error">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
+                        </Tooltip>
+
                         <Tooltip title="Profile">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                            <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
                                 <Avatar
                                     alt={user.first_name + ' ' + user.last_name}
                                     src={user.avatar?.medium ?? "/no-avatar"}
                                 />
                             </IconButton>
-
                         </Tooltip>
+
+
+
+
                         <Menu
                             anchorEl={anchorElUser}
                             id="account-menu"

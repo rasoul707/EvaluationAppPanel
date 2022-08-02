@@ -161,7 +161,7 @@ export default function DefineEvaluation() {
 
     const getTargetSoftwareList = async () => {
         try {
-            const response = await API.GET()(`software/softs/?area=${softData.area_id}`)
+            const response = await API.GET()(`software/target_softs/?area=${softData.area_id}`)
             setTargetSoftwareList(response.data.filter(({ id }) => id !== softID))
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)
@@ -260,8 +260,10 @@ export default function DefineEvaluation() {
         try {
             const response = await API.PATCH()(`software/${softID}/`, { sections_id })
             setSoftData(response.data)
+            return _id
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)
+            return 'error'
         }
     }
     /************************************** */
@@ -281,7 +283,6 @@ export default function DefineEvaluation() {
                 _sectionsList.push({ id, title, category: 'Not use before' })
             }
         })
-
     }
 
     const panel = <Card sx={{ mt: 2 }}>

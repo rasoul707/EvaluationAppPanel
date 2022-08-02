@@ -149,6 +149,7 @@ const SignUp = () => {
                     value={firstName}
                     onChange={(e) => { setFirstName(e.target.value) }}
                     disabled={disabled}
+                    autoComplete="off"
                 />
                 <TextField
                     label="Last name"
@@ -157,6 +158,7 @@ const SignUp = () => {
                     value={lastName}
                     onChange={(e) => { setLastName(e.target.value) }}
                     disabled={disabled}
+                    autoComplete="off"
                 />
                 <FormControl
                     variant="filled"
@@ -181,7 +183,7 @@ const SignUp = () => {
                     value={username}
                     onChange={(e) => { setUsername(e.target.value) }}
                     disabled={disabled}
-                    autoComplete="false"
+                    autoComplete="off"
                 />
                 <TextField
                     label="Email"
@@ -191,7 +193,7 @@ const SignUp = () => {
                     value={email}
                     onChange={(e) => { setEmail(e.target.value) }}
                     disabled={disabled}
-                    autoComplete="false"
+                    autoComplete="off"
                 />
 
 
@@ -207,7 +209,7 @@ const SignUp = () => {
                     value={phoneNumber}
                     onChange={(e) => { setPhoneNumber(e.target.value) }}
                     disabled={disabled}
-                    autoComplete="false"
+                    autoComplete="off"
                 />
 
                 <TextField
@@ -219,7 +221,7 @@ const SignUp = () => {
                     value={password}
                     onChange={(e) => { setPassword(e.target.value) }}
                     disabled={disabled}
-                    autoComplete="false"
+                    autoComplete="new-password"
                 />
 
                 <FormControlLabel
@@ -231,7 +233,6 @@ const SignUp = () => {
                     checked={acceptTerms}
                     onChange={(e) => setAcceptTerms(e.target.checked)}
                     disabled={disabled}
-
                 />
                 <LoadingButton
                     variant="contained"

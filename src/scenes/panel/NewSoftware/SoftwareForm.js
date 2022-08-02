@@ -21,9 +21,11 @@ export default function SoftwareForm({
     area, setArea,
     downloadLink, setDownloadLink,
     description, setDescription,
+    isActive, setActive,
     image, setImage,
     handleUploadImage,
-    handleRemove
+    handleArchive,
+    handleUnarchive,
 }) {
     const sxicons = { color: '#0277bd', mr: 1, my: 0.5 }
     const sxbox = { display: 'flex', alignItems: 'flex-end', marginTop: (theme) => theme.spacing(2) }
@@ -36,7 +38,7 @@ export default function SoftwareForm({
             xs={12}
         >
 
-            <CardContent>
+            <CardContent >
 
                 <Typography variant="h6" component="div">
                     {isNew ? "New Software" : "Edit Software"}
@@ -115,16 +117,26 @@ export default function SoftwareForm({
                         children={"Submit"}
                         onClick={submit}
                     />
-                    {isNew || <Button
+                    {(!isNew && isActive) && <Button
                         sx={{ ml: .5 }}
                         color="error"
-                        aria-label="remove"
                         variant="contained"
                         size="large"
                         disabled={disabled}
                         loading={loading}
-                        children={"remove"}
-                        onClick={handleRemove}
+                        children={"Archive"}
+                        onClick={handleArchive}
+                    />}
+
+                    {(!isNew && !isActive) && <Button
+                        sx={{ ml: .5 }}
+                        color="error"
+                        variant="contained"
+                        size="large"
+                        disabled={disabled}
+                        loading={loading}
+                        children={"Unarchive"}
+                        onClick={handleUnarchive}
                     />}
                 </Box>
 

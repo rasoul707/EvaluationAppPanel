@@ -33,7 +33,7 @@ export default function NewSoftware() {
     const isNew = params.softID === 'new'
     const softID = !isNew ? parseInt(params.softID) : null
 
-    const [openRemoveDig, setOpenRemoveDig] = React.useState(false)
+
 
 
     const [disabled, setDisabled] = React.useState(false);
@@ -45,6 +45,7 @@ export default function NewSoftware() {
     const [downloadLink, setDownloadLink] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [image, setImage] = React.useState(null);
+    const [isActive, setActive] = React.useState(null);
 
     const [areaList, setAreaList] = React.useState([]);
 
@@ -59,6 +60,7 @@ export default function NewSoftware() {
             setDownloadLink(m.download_link)
             setDescription(m.description)
             setImage(m.logo)
+            setActive(m.is_active)
         } catch (error) {
             setID(0)
             API.ResponseError(enqueueSnackbar, error)
@@ -145,17 +147,15 @@ export default function NewSoftware() {
             if (!sameName) {
                 enqueueSnackbar("This software already added", { variant: 'error' })
             } else {
-                let res
+
                 if (!isNew) {
-                    res = await API.PATCH()(`software/${softID}/`, data)
+                    await API.PATCH()(`software/${softID}/`, data)
                     enqueueSnackbar("Your software updated successfully", { variant: 'success' })
                 } else {
-                    res = await API.POST()(`software/`, data)
+                    await API.POST()(`software/`, data)
                     enqueueSnackbar("Your software added successfully", { variant: 'success' })
                 }
-
-                // await submitEvaluations(res.data.id)
-                history.push(`/softwares/` + res.data.id)
+                history.push(`/softwares`)
             }
 
 
@@ -225,22 +225,49 @@ export default function NewSoftware() {
     }
 
 
-    const closeDialog = () => setOpenRemoveDig(false)
-    const removeSoftware = async () => {
+
+
+
+    const [openArchiveDig, setOpenArchiveDig] = React.useState(false)
+    const [openUnarchiveDig, setOpenUnarchiveDig] = React.useState(false)
+
+    const closeArchiveDialog = () => setOpenArchiveDig(false)
+    const closeUnarchiveDialog = () => setOpenUnarchiveDig(false)
+
+    const handleArchive = () => {
+        setOpenArchiveDig(true)
+    }
+    const handleUnarchive = () => {
+        setOpenUnarchiveDig(true)
+    }
+
+    const archiveSoftware = async () => {
         const softwareID = softID;
-        closeDialog()
+        closeArchiveDialog()
         try {
             await API.DELETE()(`software/${softwareID}/`)
-            enqueueSnackbar("Deleted successfully", { variant: 'success' })
+            enqueueSnackbar("successfully", { variant: 'success' })
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)
         }
         history.replace("/softwares")
     }
 
-    const handleRemove = () => {
-        setOpenRemoveDig(true)
+    const unarchiveSoftware = async () => {
+        const softwareID = softID;
+        closeUnarchiveDialog()
+        try {
+            await API.PATCH()(`software/${softwareID}/`, { is_active: true })
+            enqueueSnackbar("successfully", { variant: 'success' })
+        } catch (error) {
+            API.ResponseError(enqueueSnackbar, error)
+        }
+        history.replace("/softwares")
     }
+
+
+
+
 
     React.useEffect(() => {
         performDate()
@@ -253,7 +280,7 @@ export default function NewSoftware() {
 
 
     return <Layout>
-        <Card>
+        <Card >
             <SoftwareForm
                 {...{
                     isNew,
@@ -263,18 +290,27 @@ export default function NewSoftware() {
                     areaList,
                     name, setName,
                     area, setArea,
+                    isActive, setActive,
                     downloadLink, setDownloadLink,
                     description, setDescription,
                     image, setImage,
                     handleUploadImage,
-                    handleRemove,
+                    handleArchive,
+                    handleUnarchive,
                 }}
             />
-            {isNew ||
-                <RemoveSoftwareDialog
-                    removeID={openRemoveDig ? softID : false}
-                    closeDialog={closeDialog}
-                    removeSoftware={removeSoftware}
+            {!isNew && isActive &&
+                <ArchiveSoftwareDialog
+                    softID={openArchiveDig ? softID : false}
+                    closeDialog={closeArchiveDialog}
+                    handle={archiveSoftware}
+                />
+            }
+            {!isNew && !isActive &&
+                <UnarchiveSoftwareDialog
+                    softID={openUnarchiveDig ? softID : false}
+                    closeDialog={closeUnarchiveDialog}
+                    handle={unarchiveSoftware}
                 />
             }
         </Card>
@@ -283,22 +319,45 @@ export default function NewSoftware() {
 }
 
 
-const RemoveSoftwareDialog = ({ removeID, closeDialog, removeSoftware }) => {
+const ArchiveSoftwareDialog = ({ softID, close, handle }) => {
     return <Dialog
-        open={removeID}
-        onClose={closeDialog}
+        open={softID}
+        onClose={close}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
     >
-        <DialogTitle id="alert-dialog-title">Remove Software</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Archive Software</DialogTitle>
         <DialogContent>
             <DialogContentText id="alert-dialog-description">
                 Are you sure you want to do this?
             </DialogContentText>
         </DialogContent>
         <DialogActions>
-            <Button onClick={closeDialog} color="info">No</Button>
-            <Button onClick={removeSoftware} color="error" autoFocus>Yes! I'm sure</Button>
+            <Button onClick={close} color="info">No</Button>
+            <Button onClick={handle} color="error" autoFocus>Yes! I'm sure</Button>
+        </DialogActions>
+    </Dialog>
+}
+
+
+
+
+const UnarchiveSoftwareDialog = ({ softID, close, handle }) => {
+    return <Dialog
+        open={softID}
+        onClose={close}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+    >
+        <DialogTitle id="alert-dialog-title">Unarchive Software</DialogTitle>
+        <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+                Are you sure you want to do this?
+            </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={close} color="info">No</Button>
+            <Button onClick={handle} color="error" autoFocus>Yes! I'm sure</Button>
         </DialogActions>
     </Dialog>
 }

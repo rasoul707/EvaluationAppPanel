@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
 import Rating from '@mui/material/Rating';
-
+import Link from '@mui/material/Link';
 import { Link as LinkRoute } from "react-router-dom"
 
 
@@ -20,8 +20,22 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
     let size = 128
     let $tools = null
     if (noTools) {
-        $tools = null
-        // size = 20
+        $tools = <Grid item xs container direction="row" spacing={1}>
+            <Grid item>
+                {isLoading
+                    ?
+                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Download" />} />
+                    :
+                    <Button
+                        children={"Download"}
+                        color="warning"
+                        component={Link}
+                        href={data.download_link}
+                        target="_blank"
+                    />
+                }
+            </Grid>
+        </Grid>
     }
     else if (isMySoftware) {
         $tools = <Grid item xs container direction="row" spacing={1}>
@@ -58,7 +72,21 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Edit" />} />
+                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Download" />} />
+                    :
+                    <Button
+                        children={"Download"}
+                        color="warning"
+                        component={Link}
+                        href={data.download_link}
+                        target="_blank"
+                    />
+                }
+            </Grid>
+            <Grid item>
+                {isLoading
+                    ?
+                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Evaluate" />} />
                     :
                     <Button
                         children={"Evaluate"}
@@ -76,8 +104,9 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             p: 2,
             margin: 'auto',
             flexGrow: 1,
-            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+            backgroundColor: data?.is_active === false ? "#b3b3b3" : '#fff',
         }}
+
     >
 
         <Grid container spacing={2} justifyContent="center" alignItems="center">
@@ -113,16 +142,16 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
                                 ?
                                 <Skeleton animation="wave" variant='text' />
                                 :
-                                "Area: " + data.area?.name
+                                [<b>Area: </b>, data.area?.name]
                             }
                         </Typography>
 
-                        <Typography gutterBottom variant="subtitle2" sx={{ height: 40 }}>
+                        <Typography gutterBottom variant="body2" sx={{ height: 40 }}>
                             {isLoading
                                 ?
                                 <Skeleton animation="wave" variant='text' />
                                 :
-                                data.evaluations?.length === 0 ? "-" : data.evaluations?.join(", ")
+                                data.evaluations?.length === 0 ? null : [<b>Avail. Evaluations: </b>, data.evaluations?.join(", ")]
                             }
                         </Typography>
                     </Grid>

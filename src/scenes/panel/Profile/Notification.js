@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import * as React from 'react';
-import { Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Card, CardContent, Typography, InputLabel, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab'
 import * as API from "../../../api";
 import { useSnackbar } from 'notistack';
@@ -47,36 +47,47 @@ const Notification = ({ setDisabled, setLoading, disabled, loading }) => {
             <Typography variant="h6" component="div" sx={{ mb: 2 }}>
                 Notification
             </Typography>
-            <FormControl
-                variant="standard"
-                sx={{ marginBottom: (theme) => theme.spacing(2) }}
-                fullWidth
-            >
-                <InputLabel>When finish evaluation</InputLabel>
-                <Select
-                    label="Finish evaluation"
-                    value={notificationFinishEvaluation.length ? notificationFinishEvaluation : ["none"]}
-                    onChange={(e) => {
-                        const v = e.target.value
-                        if (v.includes("none")) {
-                            const ii = v.indexOf("none")
-                            v.splice(ii, 1);
-                        }
-                        setNotificationFinishEvaluation(e.target.value)
-                    }}
-                    disabled={disabled}
-                    multiple
-                >
-                    <MenuItem value="none" disabled>None</MenuItem>
-                    <MenuItem value="email">By email</MenuItem>
-                    <MenuItem value="sms">By sms</MenuItem>
-                </Select>
-            </FormControl>
+
+
+
+            <FormGroup>
+                <InputLabel>Finish evaluation</InputLabel>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={notificationFinishEvaluation.includes('email')}
+                            onChange={(e) => {
+                                const v = e.target.checked
+                                let m = notificationFinishEvaluation
+                                if (v) m = [...m, 'email']
+                                else m = m.filter((v) => v !== 'email')
+                                setNotificationFinishEvaluation(m)
+                            }}
+                        />}
+                    label="By Email"
+                />
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={notificationFinishEvaluation.includes('sms')}
+                            onChange={(e) => {
+                                const v = e.target.checked
+                                let m = notificationFinishEvaluation
+                                if (v) m = [...m, 'sms']
+                                else m = m.filter((v) => v !== 'sms')
+                                setNotificationFinishEvaluation(m)
+                            }}
+                        />
+                    }
+                    label="By Sms"
+                />
+            </FormGroup>
+
 
             <LoadingButton
                 variant="contained"
                 size="large"
-                children="Edit"
+                children="Submit"
                 onClick={submit}
                 disabled={disabled}
                 loading={loading}
