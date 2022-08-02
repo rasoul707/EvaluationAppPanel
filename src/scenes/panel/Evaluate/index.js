@@ -75,11 +75,11 @@ export default function Evaluation() {
 
 
     const performData = async () => {
-        await getMetricsItems()
-        await getCommentsItems()
-        await getRatingsItems()
-        await getComparesItems()
-        await getQuestionnairesItems()
+        if (softData?.evaluations?.includes('metric')) await getMetricsItems()
+        if (softData?.evaluations?.includes('comment')) await getCommentsItems()
+        if (softData?.evaluations?.includes('rating')) await getRatingsItems()
+        if (softData?.evaluations?.includes('compare')) await getComparesItems()
+        if (softData?.evaluations?.includes('questionnaire')) await getQuestionnairesItems()
         setDisabled(false)
         setInitial(false)
     }
@@ -156,7 +156,7 @@ export default function Evaluation() {
 
 
 
-
+    let indexTabs = 0
     const panel = <Card sx={{ mt: 2 }}>
         <Tabs
             value={activeTab}
@@ -173,45 +173,56 @@ export default function Evaluation() {
             {softData?.evaluations?.includes('questionnaire') && <Tab label="Questionnaire" disabled={disabled} />}
         </Tabs>
 
-        {softData?.evaluations?.includes('metric') && <TabPanel value={activeTab} index={0} disabled={disabled}>
-            <MetricForm
-                data={metricData}
-                set={setMetricData}
-                disabled={disabled}
-            />
-        </TabPanel>}
+        {softData?.evaluations?.includes('metric') &&
+            <TabPanel value={activeTab} index={indexTabs} disabled={disabled}>
+                <MetricForm
+                    data={metricData}
+                    set={setMetricData}
+                    disabled={disabled}
+                />
+            </TabPanel>
+        }
 
-        {softData?.evaluations?.includes('comment') && <TabPanel value={activeTab} index={1} disabled={disabled}>
-            <CommentForm
-                data={commentData}
-                set={setCommentData}
-                disabled={disabled}
-            />
-        </TabPanel>}
+        {softData?.evaluations?.includes('comment') &&
+            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+                <CommentForm
+                    data={commentData}
+                    set={setCommentData}
+                    disabled={disabled}
+                />
+            </TabPanel>
+        }
 
-        {softData?.evaluations?.includes('rating') && <TabPanel value={activeTab} index={2} disabled={disabled}>
-            <RatingForm
-                data={ratingData}
-                set={setRatingData}
-                disabled={disabled}
-            />
-        </TabPanel>}
+        {softData?.evaluations?.includes('rating') &&
+            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+                <RatingForm
+                    data={ratingData}
+                    set={setRatingData}
+                    disabled={disabled}
+                />
+            </TabPanel>
+        }
 
-        {softData?.evaluations?.includes('compare') && <TabPanel value={activeTab} index={3} disabled={disabled}>
-            <CompareForm
-                data={compareData}
-                set={setCompareData}
-                disabled={disabled}
-            />
-        </TabPanel>}
+        {softData?.evaluations?.includes('compare') &&
+            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+                <CompareForm
+                    data={compareData}
+                    set={setCompareData}
+                    disabled={disabled}
+                />
+            </TabPanel>
+        }
 
-        {softData?.evaluations?.includes('questionnaire') && <TabPanel value={activeTab} index={4} disabled={disabled}>
-            <QuestionnaireForm
-                data={questionnaireData}
-                set={setQuestionnaireData}
-                disabled={disabled}
-            />
-        </TabPanel>}
+        {softData?.evaluations?.includes('questionnaire') &&
+            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+                <QuestionnaireForm
+                    data={questionnaireData}
+                    set={setQuestionnaireData}
+                    disabled={disabled}
+                />
+            </TabPanel>
+        }
+
     </Card>
 
     const loading = <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 30 }}>

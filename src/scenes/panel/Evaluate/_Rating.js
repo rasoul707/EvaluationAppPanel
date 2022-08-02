@@ -34,8 +34,6 @@ const Item = ({ data, setUserData, disabled }) => {
 
 
     return <>
-        {JSON.stringify(user_data)}
-
         <Grid container item spacing={2} >
 
             <Grid item xs={12}>

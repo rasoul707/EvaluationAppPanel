@@ -27,7 +27,7 @@ const Item = ({ data, setUserData, disabled }) => {
     return <>
         <Grid item spacing={2} >
             <Typography variant='h6'>
-                {data.category.name}
+                {data.category?.name}
             </Typography>
         </Grid>
         <Grid container item spacing={2} >
@@ -38,8 +38,6 @@ const Item = ({ data, setUserData, disabled }) => {
                             {title}
                         </Typography>
                     </Grid>
-
-
                     <Grid item xs={12}>
                         <Grid container>
                             <Slider
