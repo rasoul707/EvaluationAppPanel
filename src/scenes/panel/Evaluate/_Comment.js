@@ -14,7 +14,7 @@ import { Submit } from "./_Tools"
 const Item = ({ data, setUserData, disabled }) => {
 
     const user_data = data.user_data
-
+    disabled = disabled || data.user_data?.id > 0
 
     return <>
         <Grid container item spacing={2} >
@@ -35,7 +35,7 @@ const Item = ({ data, setUserData, disabled }) => {
                     rows={5}
                     value={user_data?.comment}
                     onChange={(e) => { setUserData(e.target.value) }}
-                    disabled={disabled || user_data?.id > 0}
+                    disabled={disabled}
                 />
             </Grid>
 

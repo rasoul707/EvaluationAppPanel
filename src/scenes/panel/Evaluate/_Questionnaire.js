@@ -4,7 +4,7 @@ import * as React from 'react';
 
 
 import { useSnackbar } from 'notistack';
-import { Grid, Divider, Typography, List, RadioGroup, Radio, ListItem, FormControl, FormLabel, FormControlLabel, CircularProgress, Collapse, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import { Grid, Divider, Typography, List, RadioGroup, Radio, ListItem, FormControl, FormLabel, FormControlLabel, CircularProgress, Collapse, ListItemButton, } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
@@ -25,10 +25,10 @@ const ConvertToObject = (user_data) => {
 
 const Item = ({ data, setUserData, disabled, variables }) => {
 
-    const user_data = ConvertToObject(data.user_data)
+    const user_data = ConvertToObject(data.user_data?.result)
     const [previewVisible, setPreviewVisible] = React.useState(null)
 
-
+    disabled = disabled || data.user_data?.id > 0
 
     return <>
         <Grid item spacing={2} >
@@ -70,13 +70,13 @@ const Item = ({ data, setUserData, disabled, variables }) => {
                                     {variables?.questionsList[id]?.map(({ id: qid, question }, index) => (
                                         <ListItem key={`item-${qid}`}>
                                             <FormControl
-                                                disabled={disabled || user_data[qid]?.id > 0}
+                                                disabled={disabled}
                                             >
                                                 <FormLabel>{question}</FormLabel>
                                                 <RadioGroup
                                                     row
                                                     value={user_data[qid]?.answer}
-                                                    onChange={(e) => { setUserData(qid, e.target.value) }}
+                                                    onChange={(e) => { setUserData(qid, e.target.value, 'answer') }}
                                                 >
                                                     <FormControlLabel value={1} control={<Radio />} label="Useless" />
                                                     <FormControlLabel value={2} control={<Radio />} label="Poor" />
@@ -116,29 +116,26 @@ const Item = ({ data, setUserData, disabled, variables }) => {
 const Form = ({ data, set, disabled }) => {
 
     const { enqueueSnackbar } = useSnackbar()
-    const [disabledForm, setDisabledForm] = React.useState(false)
 
     const path = 'questionnaire'
 
-    const changeUserData = (index) => async (questID, val) => {
+    const changeUserData = (index) => async (questID, val, key) => {
+        if (data[index].user_data?.id) return
 
-        const user_data = ConvertToObject(data[index].user_data)
-
-        let result = {}
-        let value = [...data[index].user_data]
-        let mindex
-        if (!value) value = []
+        let resultItems = data[index].user_data?.result ? [...data[index].user_data?.result] : []
+        const user_data = ConvertToObject(data[index].user_data?.result)
+        let result = { question: questID, [key]: val, id: null }
         if (!user_data[questID]) {
-            result = { question: questID, answer: val, id: null }
-            value.push(result)
-            mindex = value.length - 1
-        } else {
-            mindex = user_data[questID].index
-            result = { ...value[mindex], question: questID, answer: val }
-            value[mindex] = result
+            resultItems.push(result)
         }
+        else {
+            let m_index = user_data[questID].index
+            result = { ...resultItems[m_index], ...result }
+            resultItems[m_index] = result
+        }
+
         let items = [...data]
-        let _data = { 'user_data': value }
+        let _data = { user_data: { result: resultItems } }
         items[index] = { ...items[index], ..._data }
         set(items)
     }
@@ -172,11 +169,16 @@ const Form = ({ data, set, disabled }) => {
     const [submitLoading, setSubmitLoading] = React.useState(false)
     const submit = async () => {
         setSubmitLoading(true)
-        setDisabledForm(true)
         for (let i = 0; i < data.length; i++) {
             const m = data[i]
             try {
-                await API.POST()(`${path}/evaluation/`, { evaluate_id: m.id, data: m.user_data })
+                await API.POST()(`${path}/evaluation/`, { evaluate_id: m.id, data: (m.user_data?.result || []) })
+
+                let items = [...data]
+                let _data = { user_data: { ...m.user_data, id: 85 } }
+                items[i] = { ...items[i], ..._data }
+                set(items)
+
                 enqueueSnackbar("Successfully", { variant: "success" })
             } catch (error) {
                 API.ResponseError(enqueueSnackbar, error)
@@ -190,7 +192,7 @@ const Form = ({ data, set, disabled }) => {
             {data?.map((data, i) => {
                 return <Item
                     key={i}
-                    disabled={disabled || disabledForm}
+                    disabled={disabled}
                     data={data}
                     setUserData={changeUserData(i)}
                     variables={{ questionsList }}

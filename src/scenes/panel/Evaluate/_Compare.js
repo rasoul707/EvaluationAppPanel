@@ -4,18 +4,16 @@ import * as React from 'react';
 
 
 import { useSnackbar } from 'notistack';
-import { Grid, Divider, Typography, Slider, Box } from '@mui/material';
-
-
-
+import { Grid, Divider, Typography, Slider, Avatar } from '@mui/material';
 
 import * as API from "../../../api";
 
+import { Submit } from "./_Tools"
 
 const ConvertToObject = (user_data) => {
     let result = {}
-    user_data?.map(({ parameter, value, id }, index) => {
-        result[parameter] = { value, index, id }
+    user_data?.map(({ parameter, main, target, id }, index) => {
+        result[parameter] = { main, target, index, id }
     })
     return result
 }
@@ -23,50 +21,86 @@ const ConvertToObject = (user_data) => {
 
 const Item = ({ data, setUserData, disabled }) => {
 
-    const user_data = ConvertToObject(data.user_data)
+    const user_data = ConvertToObject(data.user_data?.result)
+    disabled = disabled || data.user_data?.id > 0
 
 
     return <>
-        <Grid container item spacing={2} >
+        <Grid item spacing={2} >
+            <Typography variant='h6'>
+                {data.category?.name}
+            </Typography>
+        </Grid>
+        <Grid container item spacing={0} columnSpacing={10} justifyContent="space-between" >
 
-            <Grid item xs={3}>
+            <Grid item container xs={6} justifyContent="center" alignItems="center" flexDirection="column">
+                <Avatar
+                    alt={data.software?.name.toUpperCase()}
+                    src={data.software?.logo?.medium}
+                    sx={{ width: 40, height: 40 }}
+                    variant="square"
+                    children={"No Photo"}
+                />
                 <Typography variant='subtitle2'>
-                    {data.category.name}
+                    {data.software?.name}
                 </Typography>
             </Grid>
 
-            <Grid item xs={9}>
-                <Grid container direction="column">
-                    {data.parameters.map(({ title, id }) => {
-                        return <Grid item>
-                            <Grid container direction="row" justifyContent="space-between">
-                                <Grid item>
-                                    {title}
-                                </Grid>
-                                <Grid item x={12}>
-                                    <Grid container>
-                                        <Slider
-                                            step={1}
-                                            marks
-                                            min={0}
-                                            max={10}
-                                            valueLabelDisplay="auto"
-                                            value={user_data[id]?.value}
-                                            onChange={(e) => setUserData(id, e.target.value)}
-                                            sx={{ minWidth: 150, width: 250 }}
-                                            disabled={disabled}
-                                        />
-                                        {user_data[id]?.value !== null && (
-                                            <Box sx={{ ml: 2 }}>{user_data[id]?.value}</Box>
-                                        )}
-                                    </Grid>
-
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    })}
-                </Grid>
+            <Grid item container xs={6} justifyContent="center" alignItems="center" flexDirection="column">
+                <Avatar
+                    alt={data.target_software?.name.toUpperCase()}
+                    src={data.target_software?.logo?.medium}
+                    sx={{ width: 40, height: 40 }}
+                    variant="square"
+                    children={"No Photo"}
+                />
+                <Typography variant='subtitle2'>
+                    {data.target_software?.name}
+                </Typography>
             </Grid>
+            {data.parameters.map(({ title, id }) => {
+                return <>
+
+                    <Grid item xs={12} >
+                        <Typography variant='subtitle2' align='center' >
+                            {title}
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <Grid container>
+                            <Slider
+                                step={1}
+                                marks
+                                min={0}
+                                max={10}
+                                valueLabelDisplay="auto"
+                                value={user_data[id]?.main}
+                                onChange={(e) => setUserData(id, e.target.value, 'main')}
+                                sx={{ width: '100%' }}
+                                disabled={disabled}
+                            />
+                        </Grid>
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <Grid container>
+                            <Slider
+                                step={1}
+                                marks
+                                min={0}
+                                max={10}
+                                valueLabelDisplay="auto"
+                                value={user_data[id]?.target}
+                                onChange={(e) => setUserData(id, e.target.value, 'target')}
+                                sx={{ width: '100%' }}
+                                disabled={disabled}
+                            />
+                        </Grid>
+                    </Grid>
+                </>
+            })}
+
 
 
         </Grid >
@@ -84,60 +118,48 @@ const Form = ({ data, set, disabled }) => {
 
     const { enqueueSnackbar } = useSnackbar()
 
-    const path = 'metric'
+    const path = 'compare'
 
-    const changeUserData = (index) => async (paramID, val, sync = true) => {
+    const changeUserData = (index) => async (paramID, val, key) => {
+        if (data[index].user_data?.id) return
 
-        const user_data = ConvertToObject(data[index].user_data)
-
-        let result = {}
-        let value = [...data[index].user_data]
-        let mindex
-        if (!value) value = []
+        let resultItems = data[index].user_data?.result ? [...data[index].user_data?.result] : []
+        const user_data = ConvertToObject(data[index].user_data?.result)
+        let result = { parameter: paramID, [key]: val, id: null }
         if (!user_data[paramID]) {
-            result = { parameter: paramID, value: val, id: null }
-            value.push(result)
-            mindex = value.length - 1
-        } else {
-            mindex = user_data[paramID].index
-            result = { ...value[mindex], parameter: paramID, value: val }
-            value[mindex] = result
+            resultItems.push(result)
         }
-
+        else {
+            let m_index = user_data[paramID].index
+            result = { ...resultItems[m_index], ...result }
+            resultItems[m_index] = result
+        }
 
         let items = [...data]
-        const prevData = [...items]
-
-        let _data = { 'user_data': value }
+        let _data = { user_data: { result: resultItems } }
         items[index] = { ...items[index], ..._data }
         set(items)
+    }
 
-        if (sync) {
-            const { id: resultID, value: _value } = result
-            const { id } = data[index]
+    const [submitLoading, setSubmitLoading] = React.useState(false)
+    const submit = async () => {
+        setSubmitLoading(true)
+        for (let i = 0; i < data.length; i++) {
+            const m = data[i]
+            try {
+                await API.POST()(`${path}/evaluation/`, { evaluate_id: m.id, data: (m.user_data?.result || []) })
 
+                let items = [...data]
+                let _data = { user_data: { ...m.user_data, id: 85 } }
+                items[i] = { ...items[i], ..._data }
+                set(items)
 
-            if (resultID) {
-                try {
-                    await API.PATCH()(`${path}/evaluate/${resultID}/`, { value: _value })
-                } catch (error) {
-                    API.ResponseError(enqueueSnackbar, error)
-                    set(prevData)
-                }
-            } else {
-                try {
-                    const response = await API.POST()(`${path}/evaluate/`, { parameter: paramID, value: _value, evaluate_id: id })
-                    value[mindex] = response.data
-                    _data.user_data = value
-                    let items = [...data]
-                    items[index] = { ...items[index], ..._data }
-                    set(items)
-                } catch (error) {
-                    API.ResponseError(enqueueSnackbar, error)
-                    set(prevData)
-                }
+                enqueueSnackbar("Successfully", { variant: "success" })
+            } catch (error) {
+                API.ResponseError(enqueueSnackbar, error)
             }
         }
+        setSubmitLoading(false)
     }
 
     return <>
@@ -150,6 +172,7 @@ const Form = ({ data, set, disabled }) => {
                     setUserData={changeUserData(i)}
                 />
             })}
+            <Submit submitHandler={submit} loading={submitLoading} disabled={disabled} />
         </Grid>
     </>
 

@@ -21,7 +21,8 @@ const ConvertToObject = (user_data) => {
 
 const Item = ({ data, setUserData, disabled }) => {
 
-    const user_data = ConvertToObject(data.user_data)
+    const user_data = ConvertToObject(data.user_data?.result)
+    disabled = disabled || data.user_data?.id > 0
 
 
     return <>
@@ -47,9 +48,9 @@ const Item = ({ data, setUserData, disabled }) => {
                                 max={10}
                                 valueLabelDisplay="auto"
                                 value={user_data[id]?.value}
-                                onChange={(e) => setUserData(id, e.target.value)}
+                                onChange={(e) => setUserData(id, e.target.value, 'value')}
                                 sx={{ minWidth: 150, width: 250 }}
-                                disabled={disabled || user_data[id]?.id > 0}
+                                disabled={disabled}
                             />
                         </Grid>
                     </Grid>
@@ -71,29 +72,26 @@ const Item = ({ data, setUserData, disabled }) => {
 const Form = ({ data, set, disabled }) => {
 
     const { enqueueSnackbar } = useSnackbar()
-    const [disabledForm, setDisabledForm] = React.useState(false)
 
     const path = 'metric'
 
-    const changeUserData = (index) => async (paramID, val) => {
+    const changeUserData = (index) => async (paramID, val, key) => {
+        if (data[index].user_data?.id) return
 
-        const user_data = ConvertToObject(data[index].user_data)
-
-        let result = {}
-        let value = [...data[index].user_data]
-        let mindex
-        if (!value) value = []
+        let resultItems = data[index].user_data?.result ? [...data[index].user_data?.result] : []
+        const user_data = ConvertToObject(data[index].user_data?.result)
+        let result = { parameter: paramID, [key]: val, id: null }
         if (!user_data[paramID]) {
-            result = { parameter: paramID, value: val, id: null }
-            value.push(result)
-            mindex = value.length - 1
-        } else {
-            mindex = user_data[paramID].index
-            result = { ...value[mindex], parameter: paramID, value: val }
-            value[mindex] = result
+            resultItems.push(result)
         }
+        else {
+            let m_index = user_data[paramID].index
+            result = { ...resultItems[m_index], ...result }
+            resultItems[m_index] = result
+        }
+
         let items = [...data]
-        let _data = { 'user_data': value }
+        let _data = { user_data: { result: resultItems } }
         items[index] = { ...items[index], ..._data }
         set(items)
     }
@@ -101,11 +99,16 @@ const Form = ({ data, set, disabled }) => {
     const [submitLoading, setSubmitLoading] = React.useState(false)
     const submit = async () => {
         setSubmitLoading(true)
-        setDisabledForm(true)
         for (let i = 0; i < data.length; i++) {
             const m = data[i]
             try {
-                await API.POST()(`${path}/evaluation/`, { evaluate_id: m.id, data: m.user_data })
+                await API.POST()(`${path}/evaluation/`, { evaluate_id: m.id, data: (m.user_data?.result || []) })
+
+                let items = [...data]
+                let _data = { user_data: { ...m.user_data, id: 85 } }
+                items[i] = { ...items[i], ..._data }
+                set(items)
+
                 enqueueSnackbar("Successfully", { variant: "success" })
             } catch (error) {
                 API.ResponseError(enqueueSnackbar, error)
@@ -119,7 +122,7 @@ const Form = ({ data, set, disabled }) => {
             {data?.map((data, i) => {
                 return <Item
                     key={i}
-                    disabled={disabled || disabledForm}
+                    disabled={disabled}
                     data={data}
                     setUserData={changeUserData(i)}
                 />

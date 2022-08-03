@@ -32,6 +32,8 @@ const Item = ({ data, setUserData, disabled }) => {
     const user_data = data.user_data
     const [hover, setHover] = React.useState(-1);
 
+    disabled = disabled || data.user_data?.id > 0
+
 
     return <>
         <Grid container item spacing={2} >
@@ -53,7 +55,7 @@ const Item = ({ data, setUserData, disabled }) => {
                         onChangeActive={(event, newHover) => {
                             setHover(newHover);
                         }}
-                        disabled={disabled || user_data?.id > 0}
+                        disabled={disabled}
                     />
                     {user_data?.rating !== null && (
                         <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : user_data?.rating / 2]}</Box>

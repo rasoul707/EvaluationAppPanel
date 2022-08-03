@@ -156,7 +156,7 @@ export default function Evaluation() {
 
 
 
-    let indexTabs = 0
+    let indexTabs = -1
     const panel = <Card sx={{ mt: 2 }}>
         <Tabs
             value={activeTab}
@@ -174,7 +174,7 @@ export default function Evaluation() {
         </Tabs>
 
         {softData?.evaluations?.includes('metric') &&
-            <TabPanel value={activeTab} index={indexTabs} disabled={disabled}>
+            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
                 <MetricForm
                     data={metricData}
                     set={setMetricData}
