@@ -55,6 +55,11 @@ export default function DefineEvaluation() {
     const getSoftware = async () => {
         try {
             const response = await API.GET()(`software/${softID}/`)
+            if (!response.data.is_active) {
+                enqueueSnackbar("Software is inactivated", { variant: "error" })
+                history.replace("/softwares")
+                return;
+            }
             setSoftData(response.data)
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)

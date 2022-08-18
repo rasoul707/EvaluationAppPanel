@@ -7,15 +7,16 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
 import Rating from '@mui/material/Rating';
-import Link from '@mui/material/Link';
 import { Link as LinkRoute } from "react-router-dom"
-
+import AboutSoftDialog from "../components/AboutSoftDialog"
 
 
 
 
 const SoftwareItem = ({ data, noTools, isMySoftware }) => {
     const isLoading = !data
+
+    const [openInfoDialog, setOpenInfoDialog] = React.useState(false)
 
     let size = 128
     let $tools = null
@@ -24,14 +25,12 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Download" />} />
+                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="About" />} />
                     :
                     <Button
-                        children={"Download"}
-                        color="warning"
-                        component={Link}
-                        href={data.download_link}
-                        target="_blank"
+                        children={"About"}
+                        color="info"
+                        onClick={() => setOpenInfoDialog(true)}
                     />
                 }
             </Grid>
@@ -62,6 +61,7 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
                         color="primary"
                         component={LinkRoute}
                         to={`/softwares/${data.id}/evaluation`}
+                        disabled={!data.is_active}
                     />
                 }
             </Grid>
@@ -72,14 +72,12 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Download" />} />
+                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="About" />} />
                     :
                     <Button
-                        children={"Download"}
-                        color="warning"
-                        component={Link}
-                        href={data.download_link}
-                        target="_blank"
+                        children={"About"}
+                        color="info"
+                        onClick={() => setOpenInfoDialog(true)}
                     />
                 }
             </Grid>
@@ -167,7 +165,26 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
 
 
         </Grid>
+
+
+        <AboutSoftDialog
+            open={openInfoDialog}
+            handleClose={() => setOpenInfoDialog(false)}
+            title={data?.name}
+            description={data?.description}
+            download_link={data?.download_link}
+            logo={data?.logo?.medium}
+        />
+
     </Paper>
 }
 
 export default SoftwareItem
+
+
+
+
+
+
+
+
