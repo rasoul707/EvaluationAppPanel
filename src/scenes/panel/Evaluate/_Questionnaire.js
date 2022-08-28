@@ -33,11 +33,11 @@ const Item = ({ data, setUserData, disabled, variables }) => {
     return <>
         <Grid item spacing={2} >
             <Typography variant='h6'>
-                {data.category.name}
+                {data?.category?.name}
             </Typography>
         </Grid>
         <Grid container item spacing={2} >
-            {data.parameters.map(({ title, id }) => {
+            {data?.parameters.map(({ title, id }) => {
                 return <>
                     <List
                         sx={{ width: '100%', bgcolor: 'background.paper' }}
@@ -54,7 +54,6 @@ const Item = ({ data, setUserData, disabled, variables }) => {
                             </ListItemButton>
                         }
                     >
-
                         <Grid container>
                             <Collapse in={previewVisible === id} timeout="auto" unmountOnExit sx={{ pl: 2, }}>
                                 <List
@@ -90,13 +89,9 @@ const Item = ({ data, setUserData, disabled, variables }) => {
                                 </List>
                             </Collapse>
                         </Grid>
-
-
                     </List>
                 </>
             })}
-
-
         </Grid >
 
         <Grid container item>

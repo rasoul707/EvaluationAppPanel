@@ -3,13 +3,17 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
 import Rating from '@mui/material/Rating';
 import { Link as LinkRoute } from "react-router-dom"
 import AboutSoftDialog from "../components/AboutSoftDialog"
 
+import EditIcon from '@mui/icons-material/Edit';
+import BallotIcon from '@mui/icons-material/Ballot';
+import TaskIcon from '@mui/icons-material/Task';
+import InfoIcon from '@mui/icons-material/Info';
 
 
 
@@ -25,10 +29,10 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="About" />} />
+                    <Skeleton animation="wave" variant='circular' children={<IconButton children={<InfoIcon />} />} />
                     :
-                    <Button
-                        children={"About"}
+                    <IconButton
+                        children={<InfoIcon />}
                         color="info"
                         onClick={() => setOpenInfoDialog(true)}
                     />
@@ -41,11 +45,11 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Edit" />} />
+                    <Skeleton animation="wave" variant='circular' children={<IconButton children={<EditIcon />} />} />
                     :
-                    <Button
-                        children={"Edit"}
-                        color="warning"
+                    <IconButton
+                        children={<EditIcon />}
+                        color="info"
                         component={LinkRoute}
                         to={`/softwares/${data.id}`}
                     />
@@ -54,13 +58,27 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Define_Evaluation" />} />
+                    <Skeleton animation="wave" variant='circular' children={<IconButton children={<BallotIcon />} />} />
                     :
-                    <Button
-                        children="Define Evaluation"
-                        color="primary"
+                    <IconButton
+                        children={<BallotIcon />}
+                        color="warning"
                         component={LinkRoute}
                         to={`/softwares/${data.id}/evaluation`}
+                        disabled={!data.is_active}
+                    />
+                }
+            </Grid>
+            <Grid item>
+                {isLoading
+                    ?
+                    <Skeleton animation="wave" variant='circular' children={<IconButton children={<TaskIcon />} />} />
+                    :
+                    <IconButton
+                        children={<TaskIcon />}
+                        color="success"
+                        component={LinkRoute}
+                        to={`/softwares/${data.id}/result`}
                         disabled={!data.is_active}
                     />
                 }
@@ -72,10 +90,10 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="About" />} />
+                    <Skeleton animation="wave" variant='circular' children={<IconButton children={<InfoIcon />} />} />
                     :
-                    <Button
-                        children={"About"}
+                    <IconButton
+                        children={<InfoIcon />}
                         color="info"
                         onClick={() => setOpenInfoDialog(true)}
                     />
@@ -84,11 +102,11 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             <Grid item>
                 {isLoading
                     ?
-                    <Skeleton animation="wave" variant='rectangular' sx={{ borderRadius: 1 }} children={<Button children="Evaluate" />} />
+                    <Skeleton animation="wave" variant='circular' children={<IconButton children={<BallotIcon />} />} />
                     :
-                    <Button
-                        children={"Evaluate"}
-                        color="primary"
+                    <IconButton
+                        children={<BallotIcon />}
+                        color="warning"
                         component={LinkRoute}
                         to={`/evaluate/${data.id}`}
                     />

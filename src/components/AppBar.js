@@ -19,7 +19,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Badge from '@mui/material/Badge';
-
+import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
 
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoIcon from '@mui/icons-material/TableChart';
@@ -32,11 +33,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import * as API from "../api"
 
-const pages = [
-    { title: 'New Software', icon: <NewSoftIcon />, url: '/softwares/new' },
-    { title: 'Manage Softwares', icon: <SoftsIcon />, url: '/softwares' },
-    { title: 'Evaluations', icon: <EvaluationIcon />, url: '/evaluations' }
-];
+
 
 
 const ResponsiveAppBar = () => {
@@ -66,6 +63,21 @@ const ResponsiveAppBar = () => {
         await API.POST(true)('auth/logout/')
         localStorage.clear()
         window.location.reload()
+    }
+
+    let pages = [];
+
+    if (user.user_level === 'level2') {
+        pages = [
+            { title: 'Evaluations', icon: <EvaluationIcon />, url: '/evaluations' }
+        ]
+    }
+    if (user.user_level === 'level3') {
+        pages = [
+            { title: 'New Software', icon: <NewSoftIcon />, url: '/softwares/new' },
+            { title: 'Manage Softwares', icon: <SoftsIcon />, url: '/softwares' },
+            { title: 'Evaluations', icon: <EvaluationIcon />, url: '/evaluations' }
+        ]
     }
 
 
@@ -240,7 +252,11 @@ const ResponsiveAppBar = () => {
                                     alt={user.first_name + ' ' + user.last_name}
                                     src={user.avatar?.medium ?? "/no-avatar"}
                                 />
-                                {user.first_name + ' ' + user.last_name}
+                                <Stack direction="column">
+                                    {user.first_name + ' ' + user.last_name}
+                                    <Chip label={user.user_level} size="small" />
+                                </Stack>
+
                             </MenuItem>
                             <Divider />
                             <MenuItem
