@@ -10,6 +10,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import EventIcon from '@mui/icons-material/Event';
+import { useHistory, useLocation } from 'react-router-dom';
+
 
 
 export const Adder = ({ newHandler, loading, disabled }) => {
@@ -475,8 +477,12 @@ export const MainForm = ({ softID, data, set, disabled, variables, Item, path })
 
 export const MainItem = ({ data, set, remove, isActive, active, isPublish, publish, extension, disabled, children, preview, otherTools }) => {
 
-    const _result = () => {
+    const history = useHistory()
+    const location = useLocation()
 
+    const _result = () => {
+        const sid = location.pathname.split("/")[2]
+        history.push(`/softwares/${sid}/result`)
     }
 
     const _disabled = disabled || !isActive || isPublish
