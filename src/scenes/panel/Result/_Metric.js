@@ -1,9 +1,11 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Grid, Divider, } from '@mui/material';
+import { Grid, Divider, Typography } from '@mui/material';
 
-import { PieChart, Detail } from './_Tools';
+import { PieChart, BarChart, Detail } from './_Tools';
+
+
 
 
 
@@ -30,28 +32,18 @@ const Item = ({ data }) => {
 
 
 
-    let byParameterChart = {}
-    for (let i = 0; i < Object.keys(data.by_parameter).length; i++) {
-        const paramID = Object.keys(data.by_parameter)[i]
-        let chartData = {}
-        let byParChartData = []
-        for (let j = 0; j < data.by_parameter[paramID].data.length; j++) {
-            const c = data.by_parameter[paramID].data[j]
-            if (chartData[c] === undefined) {
-                chartData[c] = byParChartData.length
-                byParChartData.push({ name: 'Score ' + c, value: 1 })
-            } else {
-                byParChartData[chartData[c]]['value'] += 1
-            }
+    const pkeys = Object.keys(data.by_parameter)
+    const byParamChartOP = []
+    const byParamChat = {}
+    for (let i = 0; i < pkeys.length; i++) {
+        const p = data.by_parameter[pkeys[i]]
+        byParamChartOP.push({ name: p.name })
+        byParamChat[p.name] = 0
+        for (let j = 0; j < p.data.length; j++) {
+            byParamChat[p.name] += p.data[j]
         }
-        byParameterChart[paramID] = {
-            name: data.by_parameter[paramID].name,
-            data: byParChartData
-        }
+        byParamChat[p.name] /= p.data.length
     }
-
-
-
 
     return <>
         <Grid container item spacing={2} alignItems="center" justifyContent="center">
@@ -69,14 +61,17 @@ const Item = ({ data }) => {
                 </Grid>
             </Grid>
             <Grid item md={6} xs={12} key={1}>
-                <PieChart data={byDegreeChart} title={"Degree"} />
+                {byDegreeChart.length
+                    ? <PieChart data={byDegreeChart} title={"Degree"} />
+                    : ""
+                }
             </Grid>
-            {Object.keys(byParameterChart).map((paramID) => {
-                const { name, data } = byParameterChart[paramID]
-                return <Grid item md={6} xs={12} key={paramID}>
-                    <PieChart data={data} title={name} />
-                </Grid>
-            })}
+            <Grid item xs={12} key={2} textAlign='center'>
+                {byParamChartOP?.length
+                    ? <BarChart params={byParamChartOP} data={[byParamChat]} title={"Metric"} />
+                    : <Typography variant='button' >[No result]</Typography>
+                }
+            </Grid>
         </Grid >
 
         <Grid container item>

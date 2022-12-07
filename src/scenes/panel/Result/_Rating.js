@@ -1,12 +1,9 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Grid, Divider, } from '@mui/material';
+import { Grid, Divider, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, Rating, } from '@mui/material';
 
 import { PieChart, Detail } from './_Tools';
-
-
-
 
 
 
@@ -26,6 +23,12 @@ const Item = ({ data }) => {
         }
     }
 
+    let byList = data.by_list
+    let _ratingAvg = 0
+    for (let i = 0; i < byList.length; i++) {
+        _ratingAvg += byList[i].rating
+    }
+    _ratingAvg /= byList.length
 
 
     return <>
@@ -40,11 +43,58 @@ const Item = ({ data }) => {
                         max={data.max}
                         evaluates={data.evaluates}
                         excelData={[]}
+                        extra={<>
+                            <Rating
+                                max={5}
+                                value={_ratingAvg / 2}
+                                precision={0.5}
+                                readOnly
+                            />
+                        </>
+                        }
                     />
                 </Grid>
             </Grid>
             <Grid item md={6} xs={12} key={1}>
-                <PieChart data={byDegreeChart} title={"Degree"} />
+                {byDegreeChart.length
+                    ? <PieChart data={byDegreeChart} title={"Degree"} />
+                    : ""
+                }
+            </Grid>
+            <Grid item xs={12} key={2} textAlign='center'>
+                {byList?.length
+                    ?
+                    <List sx={{ height: "150px", overflowX: "hidden" }}>
+                        <Grid container spacing={1}>
+                            {byList.map(({ rating, evaluated_by }) => {
+                                const { first_name, last_name, avatar } = evaluated_by
+                                return <>
+                                    <Grid item xs={12} md={6}>
+                                        <ListItem alignItems="flex-start">
+                                            <ListItemAvatar>
+                                                <Avatar alt={first_name + " " + last_name} src={avatar || "/NO-AVATAR"} />
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={first_name + " " + last_name}
+                                                secondary={
+                                                    <React.Fragment>
+                                                        <Rating
+                                                            max={5}
+                                                            value={rating / 2}
+                                                            precision={0.5}
+                                                            readOnly
+                                                        />
+                                                    </React.Fragment>
+                                                }
+                                            />
+                                        </ListItem>
+                                    </Grid>
+                                </>
+                            })}
+                        </Grid>
+                    </List>
+                    : <Typography variant='button' >[No result]</Typography>
+                }
             </Grid>
         </Grid >
 

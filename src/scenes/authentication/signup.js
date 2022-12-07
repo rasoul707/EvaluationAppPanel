@@ -223,7 +223,6 @@ const SignUp = () => {
                     disabled={disabled}
                     autoComplete="new-password"
                 />
-
                 <FormControlLabel
                     label={<>
                         I agree to all <Link component={LinkRoute} to="#" onClick={() => setOpenDialogTerms(true)}>terms and conditions.</Link>

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@emotion/hash": "^0.9.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.2.5",
@@ -11,6 +12,8 @@
     "@mui/x-date-pickers": "^5.0.0-beta.3",
     "@reduxjs/toolkit": "^1.8.2",
     "axios": "^0.24.0",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.0.0",
     "moment": "^2.29.4",
     "notistack": "^2.0.5",
     "react": "^17.0.2",
@@ -26,8 +29,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build_start": "react-scripts build && serve -s build -l 5315"

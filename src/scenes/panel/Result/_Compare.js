@@ -1,9 +1,9 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Grid, Divider, } from '@mui/material';
+import { Grid, Divider, Typography } from '@mui/material';
 
-import { PieChart, Detail } from './_Tools';
+import { PieChart, BarChart, Detail } from './_Tools';
 
 
 
@@ -27,6 +27,26 @@ const Item = ({ data }) => {
     }
 
 
+    const pkeys = Object.keys(data.by_parameter)
+    const byParamChart = []
+    for (let i = 0; i < pkeys.length; i++) {
+        const p = data.by_parameter[pkeys[i]]
+        byParamChart.push({ name: p.name, Soft: 0, Target: 0 })
+        for (let j = 0; j < p.data.length; j++) {
+            byParamChart[i]['Soft'] += p.data[j].soft
+            byParamChart[i]['Target'] += p.data[j].target
+        }
+        byParamChart[i]['Soft'] /= p.data.length
+        byParamChart[i]['Target'] /= p.data.length
+    }
+
+
+
+    const barParams = [
+        { name: "Target" },
+        { name: "Soft" }
+    ]
+
 
     return <>
         <Grid container item spacing={2} alignItems="center" justifyContent="center">
@@ -44,7 +64,16 @@ const Item = ({ data }) => {
                 </Grid>
             </Grid>
             <Grid item md={6} xs={12} key={1}>
-                <PieChart data={byDegreeChart} title={"Degree"} />
+                {byDegreeChart.length
+                    ? <PieChart data={byDegreeChart} title={"Degree"} />
+                    : ""
+                }
+            </Grid>
+            <Grid item xs={12} key={2} textAlign='center'>
+                {byParamChart?.length
+                    ? <BarChart params={barParams} data={byParamChart} title={"Compare"} />
+                    : <Typography variant='button' >[No result]</Typography>
+                }
             </Grid>
         </Grid >
 

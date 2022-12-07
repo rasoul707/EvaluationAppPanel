@@ -1,7 +1,7 @@
 import * as React from "react"
-import { TextField, Button, Typography, Grid, Card } from "@mui/material"
+import { TextField, Typography, Grid, Card, } from "@mui/material"
 import { LoadingButton } from '@mui/lab'
-import { Link as LinkRoute } from "react-router-dom"
+import { useParams, useHistory } from "react-router-dom"
 import { useState } from "react";
 import Logo from "../../components/Logo"
 import * as API from "../../api";
@@ -9,7 +9,7 @@ import { useSnackbar } from 'notistack';
 import validex from 'validex'
 
 
-const SignIn = () => {
+const ResetPassword = () => {
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -18,29 +18,32 @@ const SignIn = () => {
     const [loading, setLoading] = useState(false);
 
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [newPassword1, setNewPassword1] = useState('');
+    const [newPassword2, setNewPassword2] = useState('');
 
 
-
+    const params = useParams()
+    const history = useHistory()
 
     const submit = async () => {
 
         const data = {
-            username: email,
-            password: password
+            new_password1: newPassword1,
+            new_password2: newPassword2,
+            uid: params.uid,
+            token: params.token
         }
         const schema = {
-            username: {
-                nameAlias: "Email",
+            new_password1: {
+                nameAlias: "New password",
                 required: true,
                 type: 'string',
-                email: true,
+                mediumPassword: true,
             },
-            password: {
-                nameAlias: "Password",
+            new_password2: {
+                nameAlias: "Confirm new password",
                 required: true,
-                type: 'string'
+                equal: [newPassword1, new Error('Confirm password must be match')]
             },
         }
 
@@ -56,15 +59,13 @@ const SignIn = () => {
         setLoading(true)
 
         try {
-            const response = await API.POST(false)('auth/login/', data)
+            await API.POST(false)('/auth/password/reset/confirm/', data)
             setLoading(false)
 
-            localStorage.setItem("access_token", response.data.access_token);
-            localStorage.setItem("refresh_token", response.data.refresh_token);
-            enqueueSnackbar("Welcome :) Please wait...", { variant: 'success' })
+            enqueueSnackbar("Password has been reset successfully", { variant: 'success' })
 
             setTimeout(() => {
-                window.location.reload();
+                history.replace("/")
             }, 1000)
 
         } catch (error) {
@@ -79,52 +80,36 @@ const SignIn = () => {
         <Card sx={{ maxWidth: 300, padding: 7, margin: "50px auto" }}>
             <Grid container direction="column">
                 <Logo />
-                <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Sign in</Typography>
+                <Typography align="center" variant="h6" style={{ color: "#4e4e4e" }}>Reset password</Typography>
                 <TextField
-                    label="Email"
+                    label="New Password"
                     variant="filled"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    autoComplete="true"
-                    type="email"
-                    value={email}
-                    onChange={(e) => { setEmail(e.target.value) }}
+                    autoComplete="off"
+                    type="text"
+                    value={newPassword1}
+                    onChange={(e) => { setNewPassword1(e.target.value) }}
                     disabled={disabled}
                 />
                 <TextField
-                    label="Password"
+                    label="Repeat New Password"
                     variant="filled"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    autoComplete="true"
-                    type="password"
-                    value={password}
-                    onChange={(e) => { setPassword(e.target.value) }}
-                    disabled={disabled}
-                    onKeyDown={(e) => e.key === 'Enter' && submit()}
-                />
-                <Button
-                    component={LinkRoute}
-                    to="/auth/forget_password"
-                    size="small"
-                    sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    children="Forget password?"
+                    autoComplete="off"
+                    type="text"
+                    value={newPassword2}
+                    onChange={(e) => { setNewPassword2(e.target.value) }}
                     disabled={disabled}
                 />
+
                 <LoadingButton
                     variant="contained"
                     size="large"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    children="Login"
+                    children="Submit"
                     onClick={submit}
                     disabled={disabled}
                     loading={loading}
-                />
-                <Button
-                    component={LinkRoute}
-                    to="/auth/signup"
-                    size="small"
-                    sx={{ marginTop: (theme) => theme.spacing(2) }}
-                    children="Create account"
-                    disabled={disabled}
                 />
             </Grid>
         </Card>
@@ -132,4 +117,4 @@ const SignIn = () => {
 
 
 }
-export default SignIn; 
+export default ResetPassword; 

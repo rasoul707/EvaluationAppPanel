@@ -77,11 +77,11 @@ export default function Result() {
 
 
     const performData = async () => {
-        if (softData?.evaluations?.includes('metric')) await getMetricsItems()
-        if (softData?.evaluations?.includes('comment')) await getCommentsItems()
-        if (softData?.evaluations?.includes('rating')) await getRatingsItems()
-        if (softData?.evaluations?.includes('compare')) await getComparesItems()
-        if (softData?.evaluations?.includes('questionnaire')) await getQuestionnairesItems()
+        await getMetricsItems()
+        await getCommentsItems()
+        await getRatingsItems()
+        await getComparesItems()
+        await getQuestionnairesItems()
         setDisabled(false)
         setInitial(false)
     }
@@ -168,60 +168,37 @@ export default function Result() {
             sx={{ borderColor: 'divider', borderWidth: 1 }}
             allowScrollButtonsMobile
         >
-            {softData?.evaluations?.includes('metric') && <Tab label="Metric" disabled={disabled} />}
-            {softData?.evaluations?.includes('comment') && <Tab label="Comment" disabled={disabled} />}
-            {softData?.evaluations?.includes('rating') && <Tab label="Rating" disabled={disabled} />}
-            {softData?.evaluations?.includes('compare') && <Tab label="Compare" disabled={disabled} />}
-            {softData?.evaluations?.includes('questionnaire') && <Tab label="Questionnaire" disabled={disabled} />}
+            <Tab label="Metric" disabled={disabled} />
+            <Tab label="Comment" disabled={disabled} />
+            <Tab label="Rating" disabled={disabled} />
+            <Tab label="Compare" disabled={disabled} />
+            <Tab label="Questionnaire" disabled={disabled} />
         </Tabs>
 
-        {softData?.evaluations?.includes('metric') &&
-            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
-                <Metric data={metricData} />
-            </TabPanel>
-        }
+
+        <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+            <Metric data={metricData} />
+        </TabPanel>
 
 
-        {softData?.evaluations?.includes('comment') &&
-            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
-                <Comment
-                    data={commentData}
-                    set={setCommentData}
-                    disabled={disabled}
-                />
-            </TabPanel>
-        }
+        <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+            <Comment data={commentData} />
+        </TabPanel>
 
-        {softData?.evaluations?.includes('rating') &&
-            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
-                <Rating
-                    data={ratingData}
-                    set={setRatingData}
-                    disabled={disabled}
-                />
-            </TabPanel>
-        }
 
-        {softData?.evaluations?.includes('compare') &&
-            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
-                <Compare
-                    data={compareData}
-                    set={setCompareData}
-                    disabled={disabled}
-                />
-            </TabPanel>
-        }
+        <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+            <Rating data={ratingData} />
+        </TabPanel>
 
-        {softData?.evaluations?.includes('questionnaire') &&
-            <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
-                <Questionnaire
-                    data={questionnaireData}
-                    set={setQuestionnaireData}
-                    disabled={disabled}
-                />
-            </TabPanel>
-        }
 
+        <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+            <Compare data={compareData} />
+        </TabPanel>
+
+
+        <TabPanel value={activeTab} index={++indexTabs} disabled={disabled}>
+            <Questionnaire data={questionnaireData} />
+        </TabPanel>
 
     </Card>
 

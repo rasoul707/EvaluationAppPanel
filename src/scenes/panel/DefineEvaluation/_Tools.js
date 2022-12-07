@@ -437,6 +437,7 @@ export const MainForm = ({ softID, data, set, disabled, variables, Item, path })
                 />
             })}
             <Adder newHandler={addItem} loading={addLoading} disabled={disabled} />
+            {/* <Adder newHandler={addItem} loading={addLoading} disabled={disabled} /> */}
         </Grid>
         <PrePublishDialog
             open={publishDialog >= 0}

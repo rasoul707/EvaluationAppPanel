@@ -11,7 +11,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import * as API from "../../../api";
 
 import { Submit } from "./_Tools"
-
+import validex from 'validex'
 
 
 const ConvertToObject = (user_data) => {
@@ -66,26 +66,28 @@ const Item = ({ data, setUserData, disabled, variables }) => {
                                     }}
                                     subheader={<li />}
                                 >
-                                    {variables?.questionsList[id]?.map(({ id: qid, question }, index) => (
-                                        <ListItem key={`item-${qid}`}>
-                                            <FormControl
-                                                disabled={disabled}
-                                            >
-                                                <FormLabel>{question}</FormLabel>
-                                                <RadioGroup
-                                                    row
-                                                    value={user_data[qid]?.answer}
-                                                    onChange={(e) => { setUserData(qid, e.target.value, 'answer') }}
+                                    {variables?.questionsList[id]?.map(({ id: qid, question, options, custom_options }, index) => {
+                                        if (!custom_options) options = "Useless|Poor|Ok|Good|Excellent"
+                                        return (
+                                            <ListItem key={`item-${qid}`}>
+                                                <FormControl
+                                                    disabled={disabled}
                                                 >
-                                                    <FormControlLabel value={1} control={<Radio />} label="Useless" />
-                                                    <FormControlLabel value={2} control={<Radio />} label="Poor" />
-                                                    <FormControlLabel value={3} control={<Radio />} label="Ok" />
-                                                    <FormControlLabel value={4} control={<Radio />} label="Good" />
-                                                    <FormControlLabel value={5} control={<Radio />} label="Excellent" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </ListItem>
-                                    ))}
+                                                    <FormLabel>{question}</FormLabel>
+                                                    <RadioGroup
+                                                        row
+                                                        value={user_data[qid]?.answer}
+                                                        onChange={(e) => { setUserData(qid, e.target.value, 'answer') }}
+                                                    >
+                                                        {options.split("|").map((v, i) => (
+                                                            <FormControlLabel value={i + 1} control={<Radio />} label={v} />
+                                                        ))}
+                                                    </RadioGroup>
+                                                </FormControl>
+                                            </ListItem>
+                                        )
+                                    }
+                                    )}
                                 </List>
                             </Collapse>
                         </Grid>
@@ -158,11 +160,36 @@ const Form = ({ data, set, disabled }) => {
                     prmIDs.push(data[i].parameters[j].id)
             }
         }
+
         getQuestions(prmIDs)
     }, [data])
 
     const [submitLoading, setSubmitLoading] = React.useState(false)
     const submit = async () => {
+
+        const pids = Object.keys(questionsList)
+        var quLength = {}
+        for (let iq = 0; iq < pids.length; iq++) {
+            const pid = pids[iq]
+            const qu = questionsList[pid]
+            const qlength = qu.length
+            quLength[pid] = qlength
+        }
+
+
+        for (let i = 0; i < data.length; i++) {
+            let sumQ = 0
+            for (let j = 0; j < data[i].parameters.length; j++) {
+                const pid = data[i].parameters[j].id
+                const ql = quLength[pid]
+                sumQ += ql
+            }
+            const sumA = Object.keys(data[i].user_data?.result || {}).length
+            if (sumA !== sumQ) {
+                return enqueueSnackbar('Please answer all questions', { variant: "error" })
+            }
+        }
+
         setSubmitLoading(true)
         for (let i = 0; i < data.length; i++) {
             const m = data[i]
