@@ -31,6 +31,9 @@ const SignUp = () => {
     const [acceptTerms, setAcceptTerms] = useState(false);
 
 
+    const [referralCode, setReferralCode] = useState('');
+
+
     const [degreesList, setDegreesList] = useState([]);
 
 
@@ -68,6 +71,7 @@ const SignUp = () => {
             degree: degree,
             password1: password,
             password2: password,
+            ref: referralCode
         }
         const schema = {
             first_name: {
@@ -217,12 +221,25 @@ const SignUp = () => {
                     variant="filled"
                     sx={{ marginTop: (theme) => theme.spacing(2) }}
                     type="password"
-
                     value={password}
                     onChange={(e) => { setPassword(e.target.value) }}
                     disabled={disabled}
                     autoComplete="new-password"
                 />
+
+
+                <TextField
+                    label="Referral code"
+                    variant="filled"
+                    sx={{ marginTop: (theme) => theme.spacing(2) }}
+                    type="text"
+                    value={referralCode}
+                    onChange={(e) => { setReferralCode(e.target.value) }}
+                    disabled={disabled}
+                    autoComplete="off"
+                />
+
+
                 <FormControlLabel
                     label={<>
                         I agree to all <Link component={LinkRoute} to="#" onClick={() => setOpenDialogTerms(true)}>terms and conditions.</Link>

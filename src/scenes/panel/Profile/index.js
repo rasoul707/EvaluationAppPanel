@@ -5,6 +5,8 @@ import Layout from "../../../components/Layout"
 import Grid from '@mui/material/Grid';
 import EditProfile from './EditProfile';
 import Notification from './Notification';
+import Documents from './Documents';
+import Referral from './Referral';
 
 const Profile = () => {
 
@@ -22,6 +24,12 @@ const Profile = () => {
             </Grid>
             <Grid item xs={12}>
                 <Notification {...{ disabled, loading, setDisabled, setLoading }} />
+            </Grid>
+            <Grid item xs={12}>
+                <Documents {...{ disabled, loading, setDisabled, setLoading }} />
+            </Grid>
+            <Grid item xs={12}>
+                <Referral {...{ disabled, loading, setDisabled, setLoading }} />
             </Grid>
         </Grid>
     </Layout>

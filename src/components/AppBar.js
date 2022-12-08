@@ -248,10 +248,21 @@ const ResponsiveAppBar = () => {
                                 component={LinkRoute}
                                 to={"/profile"}
                             >
-                                <Avatar
-                                    alt={user.first_name + ' ' + user.last_name}
-                                    src={user.avatar?.medium ?? "/no-avatar"}
-                                />
+                                <Badge
+                                    color="warning"
+                                    badgeContent={user.score}
+                                    max={999}
+                                    showZero
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                >
+                                    <Avatar
+                                        alt={user.first_name + ' ' + user.last_name}
+                                        src={user.avatar?.medium ?? "/no-avatar"}
+                                    />
+                                </Badge>
                                 <Stack direction="column">
                                     {user.first_name + ' ' + user.last_name}
                                     <Chip label={user.user_level} size="small" />

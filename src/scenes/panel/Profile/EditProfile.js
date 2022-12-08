@@ -89,6 +89,8 @@ const EditProfile = ({ setDisabled, setLoading, disabled, loading }) => {
             closeSnackbar(uploadingSnackKey)
             enqueueSnackbar("Image uploaded successfully", { variant: 'success' })
             setAvatar(response.data)
+
+
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)
         }

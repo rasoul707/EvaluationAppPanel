@@ -61,7 +61,49 @@ export const PrePublishDialog = ({ open, handleReject, handleConfirm }) => {
 }
 
 
+export const PreConfirmDecreaseScoreDialog = ({ open, text, handleReject, handleConfirm }) => {
+    return <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleReject}
+    >
+        <DialogTitle>Pay score</DialogTitle>
+        <DialogContent >
+            <Alert severity="warning" sx={{ mb: 2 }}>
+                <AlertTitle>Warning</AlertTitle>
+                {text}
+            </Alert>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleConfirm} >Yes, I'm sure</Button>
+            <Button onClick={handleReject} color="error">Cancel</Button>
+        </DialogActions>
+    </Dialog>
+}
 
+
+
+export const NoScoreDialog = ({ open, handleReject, }) => {
+    return <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleReject}
+    >
+        <DialogTitle>No Score</DialogTitle>
+        <DialogContent >
+            <Alert severity="error" sx={{ mb: 2 }}>
+                <AlertTitle>Error</AlertTitle>
+                {open}
+            </Alert>
+            You can buy score from store or evaluate other softwares or invite people :)
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleReject} color="error">Close</Button>
+        </DialogActions>
+    </Dialog>
+}
 
 
 export const PreActivationDialog = ({ open, handleReject, handleConfirm }) => {
@@ -154,11 +196,11 @@ export const ExtensionDialog = ({ open, handleReject, handleConfirm }) => {
         <DialogTitle>Extension</DialogTitle>
         <DialogContent>
             <Typography>
-                For extension evaluation for 30 days, you should pay.
+                Are you sure to extend for 30 days
             </Typography>
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleConfirm} >Pay 0$</Button>
+            <Button onClick={handleConfirm} >Yes</Button>
             <Button onClick={handleReject} color="error">Cancel</Button>
         </DialogActions>
     </Dialog>
@@ -210,7 +252,8 @@ export const MainForm = ({ softID, data, set, disabled, variables, Item, path })
     const [deleteDialog, setDeleteDialog] = React.useState(-1)
     const [extensionDialog, setExtensionDialog] = React.useState(-1)
     const [removeLimitDialog, setRemoveLimitDialog] = React.useState(-1)
-
+    const [noScoreDialog, setNoScoreDialog] = React.useState(false)
+    const [confirmDecreaseDialog, setConfirmDecreaseDialog] = React.useState(false)
 
 
 
@@ -295,15 +338,35 @@ export const MainForm = ({ softID, data, set, disabled, variables, Item, path })
         setPublishDialog(-1)
         try {
             await changeItem(publishDialog)('publish', true)
-            enqueueSnackbar("Your evaluation published successfully", { variant: "success" })
         } catch (error) {
-            if (error?.data?.code === 'LIMIT_EVALUATION') {
-                setRemoveLimitDialog(publishDialog)
+            if (error?.data?.code === 'NO_SCORE') {
+                setNoScoreDialog(error?.data?.message)
+            }
+            if (error?.data?.code === 'CONFIRM_DECREASE_SCORE') {
+                setConfirmDecreaseDialog({ id: publishDialog, text: error?.data?.message })
             }
         }
     }
     const rejectPublish = () => {
         setPublishDialog(-1)
+    }
+
+
+    const confirmDecrease = async () => {
+        const isExtend = confirmDecreaseDialog.isExtend
+        setConfirmDecreaseDialog(-1)
+        try {
+            await changeItem(confirmDecreaseDialog?.id)(isExtend ? 'confirm_extension' : 'confirm_publish', true)
+            enqueueSnackbar("Your evaluation published successfully", { variant: "success" })
+            window.location.reload()
+        } catch (error) {
+            if (error?.data?.code === 'NO_SCORE') {
+                setNoScoreDialog(error?.data?.message)
+            }
+        }
+    }
+    const rejectDecrease = () => {
+        setConfirmDecreaseDialog(-1)
     }
 
 
@@ -361,8 +424,14 @@ export const MainForm = ({ softID, data, set, disabled, variables, Item, path })
         setExtensionDialog(-1)
         try {
             await changeItem(extensionDialog)('extension', true)
-            enqueueSnackbar("Your evaluation extended", { variant: "success" })
-        } catch (error) { }
+        } catch (error) {
+            if (error?.data?.code === 'NO_SCORE') {
+                setNoScoreDialog(error?.data?.message)
+            }
+            if (error?.data?.code === 'CONFIRM_DECREASE_SCORE') {
+                setConfirmDecreaseDialog({ id: extensionDialog, isExtend: true, text: error?.data?.message })
+            }
+        }
     }
     const rejectExtension = () => {
         setExtensionDialog(-1)
@@ -443,6 +512,17 @@ export const MainForm = ({ softID, data, set, disabled, variables, Item, path })
             open={publishDialog >= 0}
             handleReject={rejectPublish}
             handleConfirm={confirmPublish}
+        />
+        <PreConfirmDecreaseScoreDialog
+            open={confirmDecreaseDialog?.id >= 0}
+            text={confirmDecreaseDialog?.text}
+            isExtend={confirmDecreaseDialog?.isExtend}
+            handleReject={rejectDecrease}
+            handleConfirm={confirmDecrease}
+        />
+        <NoScoreDialog
+            open={noScoreDialog}
+            handleReject={() => setNoScoreDialog(false)}
         />
         <PreActivationDialog
             open={activeDialog >= 0}
