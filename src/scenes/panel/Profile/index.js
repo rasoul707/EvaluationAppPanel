@@ -7,6 +7,8 @@ import EditProfile from './EditProfile';
 import Notification from './Notification';
 import Documents from './Documents';
 import Referral from './Referral';
+import Withdraw from './Withdraw';
+
 
 const Profile = () => {
 
@@ -30,6 +32,9 @@ const Profile = () => {
             </Grid>
             <Grid item xs={12}>
                 <Referral {...{ disabled, loading, setDisabled, setLoading }} />
+            </Grid>
+            <Grid item xs={12}>
+                <Withdraw {...{ disabled, loading, setDisabled, setLoading }} />
             </Grid>
         </Grid>
     </Layout>

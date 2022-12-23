@@ -29,6 +29,7 @@ import SoftsIcon from '@mui/icons-material/Edit';
 import EvaluationIcon from '@mui/icons-material/Reviews';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ShopIcon from '@mui/icons-material/Shop';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import * as API from "../api"
@@ -251,11 +252,11 @@ const ResponsiveAppBar = () => {
                                 <Badge
                                     color="warning"
                                     badgeContent={user.score}
-                                    max={999}
+                                    max={999999999}
                                     showZero
                                     anchorOrigin={{
                                         vertical: 'top',
-                                        horizontal: 'left',
+                                        horizontal: 'right',
                                     }}
                                 >
                                     <Avatar
@@ -279,6 +280,15 @@ const ResponsiveAppBar = () => {
                                     <SettingsIcon fontSize="small" />
                                 </ListItemIcon>
                                 Settings
+                            </MenuItem>
+                            <MenuItem
+                                component={LinkRoute}
+                                to={"/shop"}
+                            >
+                                <ListItemIcon>
+                                    <ShopIcon fontSize="small" />
+                                </ListItemIcon>
+                                Shop
                             </MenuItem>
                             <MenuItem
                                 onClick={logout}
