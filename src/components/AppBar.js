@@ -89,7 +89,7 @@ const ResponsiveAppBar = () => {
                 <Toolbar disableGutters>
 
                     {/* large logo */}
-                    <a href="/">
+                    <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "white" }}>
                         <LogoIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                         <Typography
                             variant="h6"
@@ -164,7 +164,7 @@ const ResponsiveAppBar = () => {
 
 
                     {/* small logo */}
-                    <a href="/">
+                    <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "white" }}>
                         <LogoIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     </a>
                     {/* small logo */}
