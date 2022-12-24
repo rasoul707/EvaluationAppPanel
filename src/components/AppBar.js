@@ -184,23 +184,25 @@ const ResponsiveAppBar = () => {
                         </Tooltip>
 
                         <Tooltip title="Profile">
-                            <Badge
-                                color="warning"
-                                badgeContent={user.score}
-                                max={999999999}
-                                showZero
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                            >
-                                <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
+
+                            <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
+                                <Badge
+                                    color="warning"
+                                    badgeContent={user.score}
+                                    max={999999999}
+                                    showZero
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                >
                                     <Avatar
                                         alt={user.first_name + ' ' + user.last_name}
                                         src={user.avatar?.medium ?? "/no-avatar"}
                                     />
-                                </IconButton>
-                            </Badge>
+                                </Badge>
+                            </IconButton>
+
                         </Tooltip>
 
 
