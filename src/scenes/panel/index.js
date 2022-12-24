@@ -16,7 +16,7 @@ import Settings from "./Settings"
 import Home from "./Home"
 import Evaluations from "./Evaluations"
 import Result from "./Result"
-
+import Shop from "./Shop"
 
 import VerifyDialog from "../../components/VerifyDialog"
 
@@ -69,6 +69,7 @@ const Panel = () => {
                     ]
                 }
                 <Route path="/settings" exact component={Settings} />
+                <Route path="/shop" exact component={Shop} />
                 <Route path="/profile" exact component={Profile} />
                 <Route path="/" exact component={Home} />
                 <Redirect to="/" />
