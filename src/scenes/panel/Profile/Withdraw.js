@@ -20,7 +20,6 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
         const data = {
             bank_account,
         }
-
         setDisabled(true)
         setLoading(true)
         try {
@@ -33,6 +32,28 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
         setDisabled(false)
         setLoading(false)
     }
+
+
+
+    const withdrawalRequest = async () => {
+        const data = {
+            bank_account,
+        }
+        setDisabled(true)
+        setLoading(true)
+        // try {
+        //     const response = await API.PATCH(true)('auth/user/', data)
+        //     enqueueSnackbar("Successfully updated", { variant: 'success' })
+        //     dispatch({ type: 'USER_INFO', payload: { user: response.data } })
+        // } catch (error) {
+        //     API.ResponseError(enqueueSnackbar, error)
+        // }
+        setDisabled(false)
+        setLoading(false)
+    }
+
+
+
 
     return <Card>
         <CardContent>
@@ -59,10 +80,10 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
             />
             <hr />
             <LoadingButton
-                variant="contained"
+                variant="outlined"
                 size="large"
                 children="Withdrawal Request"
-                onClick={submit}
+                onClick={withdrawalRequest}
                 disabled={disabled}
                 loading={loading}
             />
