@@ -184,12 +184,23 @@ const ResponsiveAppBar = () => {
                         </Tooltip>
 
                         <Tooltip title="Profile">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
-                                <Avatar
-                                    alt={user.first_name + ' ' + user.last_name}
-                                    src={user.avatar?.medium ?? "/no-avatar"}
-                                />
-                            </IconButton>
+                            <Badge
+                                color="warning"
+                                badgeContent={user.score}
+                                max={999999999}
+                                showZero
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                            >
+                                <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
+                                    <Avatar
+                                        alt={user.first_name + ' ' + user.last_name}
+                                        src={user.avatar?.medium ?? "/no-avatar"}
+                                    />
+                                </IconButton>
+                            </Badge>
                         </Tooltip>
 
 
@@ -234,21 +245,10 @@ const ResponsiveAppBar = () => {
                                 component={LinkRoute}
                                 to={"/profile"}
                             >
-                                <Badge
-                                    color="warning"
-                                    badgeContent={user.score}
-                                    max={999999999}
-                                    showZero
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'right',
-                                    }}
-                                >
-                                    <Avatar
-                                        alt={user.first_name + ' ' + user.last_name}
-                                        src={user.avatar?.medium ?? "/no-avatar"}
-                                    />
-                                </Badge>
+                                <Avatar
+                                    alt={user.first_name + ' ' + user.last_name}
+                                    src={user.avatar?.medium ?? "/no-avatar"}
+                                />
                                 <Stack direction="column">
                                     {user.first_name + ' ' + user.last_name}
                                     <Chip label={user.user_level} size="small" />
