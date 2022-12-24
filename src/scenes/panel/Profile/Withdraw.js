@@ -57,6 +57,15 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
                 disabled={disabled}
                 loading={loading}
             />
+            <hr />
+            <LoadingButton
+                variant="contained"
+                size="large"
+                children="Withdrawal Request"
+                onClick={submit}
+                disabled={disabled}
+                loading={loading}
+            />
         </CardContent>
     </Card>
 }
