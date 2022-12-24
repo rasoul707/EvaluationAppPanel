@@ -37,7 +37,11 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
 
 
     const withdrawalRequest = async () => {
+        if (score_freeze > user.score - 20) {
+            return enqueueSnackbar("You don't have enough score :((", { variant: 'error' })
+        }
         const data = {
+            score: user.score - score_freeze,
             score_freeze,
             withdrawal_request: true
         }
