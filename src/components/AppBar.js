@@ -190,7 +190,7 @@ const ResponsiveAppBar = () => {
                                 max={999999999}
                                 showZero
                                 anchorOrigin={{
-                                    vertical: 'top',
+                                    vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                             >
