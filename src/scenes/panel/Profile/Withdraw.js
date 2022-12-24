@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import * as React from 'react';
-import { Card, CardContent, Typography, TextField, } from '@mui/material';
+import { Card, CardContent, Typography, TextField, Alert } from '@mui/material';
 import { useSelector, useDispatch } from "react-redux";
 import { useSnackbar } from 'notistack';
 import * as API from "../../../api";
@@ -15,6 +15,7 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
     const [bank_account, setBankAccount] = React.useState(user.bank_account)
+    const [score_freeze, setScoreFreeze] = React.useState(user.score_freeze)
 
     const submit = async () => {
         const data = {
@@ -37,17 +38,18 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
 
     const withdrawalRequest = async () => {
         const data = {
-            bank_account,
+            score_freeze,
+            withdrawal_request: true
         }
         setDisabled(true)
         setLoading(true)
-        // try {
-        //     const response = await API.PATCH(true)('auth/user/', data)
-        //     enqueueSnackbar("Successfully updated", { variant: 'success' })
-        //     dispatch({ type: 'USER_INFO', payload: { user: response.data } })
-        // } catch (error) {
-        //     API.ResponseError(enqueueSnackbar, error)
-        // }
+        try {
+            const response = await API.PATCH(true)('auth/user/', data)
+            enqueueSnackbar("Request sent successfully", { variant: 'success' })
+            dispatch({ type: 'USER_INFO', payload: { user: response.data } })
+        } catch (error) {
+            API.ResponseError(enqueueSnackbar, error)
+        }
         setDisabled(false)
         setLoading(false)
     }
@@ -79,14 +81,36 @@ const Withdrawal = ({ setDisabled, setLoading, disabled, loading }) => {
                 loading={loading}
             />
             <hr />
-            <LoadingButton
-                variant="outlined"
-                size="large"
-                children="Withdrawal Request"
-                onClick={withdrawalRequest}
-                disabled={disabled}
-                loading={loading}
-            />
+            {(user.withdrawal_request
+                ?
+                <Alert
+                    variant='standard'
+                    children="You have another request in process and can not set new request"
+                    severity="info"
+                />
+                :
+                <>
+                    <TextField
+                        label="How many scores you want to convert"
+                        variant="standard"
+                        sx={{ marginBottom: (theme) => theme.spacing(2) }}
+                        type="number"
+                        fullWidth
+                        max={user.score}
+                        value={score_freeze}
+                        onChange={(e) => { setScoreFreeze(e.target.value) }}
+                        disabled={disabled}
+                    />
+                    <LoadingButton
+                        variant="outlined"
+                        size="large"
+                        children="Withdrawal Request"
+                        onClick={withdrawalRequest}
+                        disabled={disabled}
+                        loading={loading}
+                    />
+                </>
+            )}
         </CardContent>
     </Card>
 }
