@@ -89,23 +89,23 @@ const ResponsiveAppBar = () => {
                 <Toolbar disableGutters>
 
                     {/* large logo */}
-                    <LogoIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="/"
-                        children="Evaluator"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    />
+                    <a href="/">
+                        <LogoIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            children="Evaluator"
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'none', md: 'flex' },
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                        />
+                    </a>
                     {/* large logo */}
 
 
@@ -164,24 +164,9 @@ const ResponsiveAppBar = () => {
 
 
                     {/* small logo */}
-                    <LogoIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="a"
-                        href=""
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                        children="Evaluator"
-                    />
+                    <a href="/">
+                        <LogoIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                    </a>
                     {/* small logo */}
 
 

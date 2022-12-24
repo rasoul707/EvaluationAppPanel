@@ -46,9 +46,9 @@ const Page = () => {
         data()
     }, [])
 
-    return <Grid container spacing={2} sx={{ mb: 2 }}>
+    return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
         {Array.from(loading ? Array(3) : softwares).map((data, index) => (
-            <Grid item xs={6} sm={4} md={4} lg={4} key={index}>
+            <Grid item xs={2} sm={4} md={4} key={index}>
                 <SoftwareItem
                     ID={0}
                     data={data}
