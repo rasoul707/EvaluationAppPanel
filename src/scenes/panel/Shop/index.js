@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useParams, useHistory } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { useSnackbar } from 'notistack';
 import { Card, Grid, Paper, CardActionArea, CardMedia, CardContent, Typography, CardActions } from '@mui/material';
 import * as API from "../../../api";
@@ -35,11 +36,39 @@ const shop = [
 ]
 
 const Shop = () => {
-    const buy = (price, score) => {
-        alert(score)
-        alert(price)
+    const user = useSelector(state => state.auth.user)
+    const dispatch = useDispatch();
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
+    const buy = (price, score) => {
+        setPayScore(score)
+        setPayPrice(price)
+        setOpenPayDialog(true)
     }
+    const cancelPayDialog = () => {
+        setOpenPayDialog(false)
+        setPayScore(null)
+        setPayPrice(null)
+    }
+    const confirmPayDialog = async () => {
+        const data = {
+            score: user.score + payScore,
+        }
+        try {
+            const response = await API.PATCH(true)('auth/user/', data)
+            enqueueSnackbar("Successfully", { variant: 'success' })
+            dispatch({ type: 'USER_INFO', payload: { user: response.data } })
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000)
+        } catch (error) {
+            API.ResponseError(enqueueSnackbar, error)
+        }
+    }
+    const [openPayDialog, setOpenPayDialog] = React.useState(false)
+    const [payPrice, setPayPrice] = React.useState(null)
+    const [payScore, setPayScore] = React.useState(null)
+
     return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
         {shop.map(({ id, score, price }, index) => {
             return <Grid item xs={2} sm={4} md={4} key={index}>
@@ -68,6 +97,26 @@ const Shop = () => {
                 </Card>
             </Grid>
         })}
+
+        <Dialog
+            open={openPayDialog}
+            keepMounted
+            onClose={cancelPayDialog}
+        >
+            <DialogTitle>Buy score</DialogTitle>
+            <DialogContent>
+                <Typography>
+                    Are you sure you want pay {payPrice} to get {payScore} score?
+                </Typography>
+
+            </DialogContent>
+            <DialogActions>
+                <DialogActions>
+                    <Button onClick={confirmPayDialog} >Yes</Button>
+                    <Button onClick={cancelPayDialog} color="error">Cancel</Button>
+                </DialogActions>
+            </DialogActions>
+        </Dialog>
     </Grid>
 }
 
