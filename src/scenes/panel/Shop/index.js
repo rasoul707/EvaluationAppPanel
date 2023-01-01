@@ -76,7 +76,6 @@ const Shop = () => {
                     <CardActionArea>
                         <CardMedia
                             component="img"
-                            height="140"
                             image={signDollar}
                             alt="dollar"
                         />
