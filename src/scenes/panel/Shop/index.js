@@ -1,19 +1,8 @@
 import * as React from 'react';
 import { useParams, useHistory } from "react-router-dom";
 import { useSnackbar } from 'notistack';
-
-import validex from 'validex'
-
-
 import { Card, Grid, Paper, CardActionArea, CardMedia, CardContent, Typography, CardActions } from '@mui/material';
-
 import * as API from "../../../api";
-
-import SoftwareForm from "./SoftwareForm"
-
-import Layout from "../../../components/Layout"
-
-
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
