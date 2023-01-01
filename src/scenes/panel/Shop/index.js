@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import signDollar from "../../../assets/images/dollar-sign.png"
 
 const shop = [
     {
@@ -47,7 +48,7 @@ const Shop = () => {
                         <CardMedia
                             component="img"
                             height="140"
-                            image="/src/assets/images/dollar-sign.png"
+                            image={signDollar}
                             alt="dollar"
                         />
                         <CardContent>
