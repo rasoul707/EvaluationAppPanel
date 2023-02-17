@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useSnackbar } from 'notistack';
-import { Card, Grid, Paper, CardActionArea, CardMedia, CardContent, Typography, CardActions } from '@mui/material';
+import { Card, Grid, CardActionArea, CardMedia, CardContent, Typography, CardActions } from '@mui/material';
 import * as API from "../../../api";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import signDollar from "../../../assets/images/dollar-sign.png"
@@ -38,7 +36,7 @@ const shop = [
 const Shop = () => {
     const user = useSelector(state => state.auth.user)
     const dispatch = useDispatch();
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+    const { enqueueSnackbar, } = useSnackbar()
 
     const buy = (price, score) => {
         setPayScore(score)
