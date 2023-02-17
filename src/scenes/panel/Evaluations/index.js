@@ -7,6 +7,16 @@ import * as API from "../../../api";
 import { useSnackbar } from 'notistack';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+
 import Layout from "../../../components/Layout"
 
 
@@ -47,6 +57,30 @@ const Page = () => {
     }, [])
 
     return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
+        <Typography mb={2}>
+            Evaluations
+        </Typography>
+        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+            <OutlinedInput
+                id="outlined-adornment-password"
+                type={'text'}
+                endAdornment={
+                    <InputAdornment position="end">
+                        <IconButton
+                            aria-label="toggle password visibility"
+                            // onClick={handleClickShowPassword}
+                            // onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                        >
+                            <Visibility />
+                            {/* {showPassword ? <VisibilityOff /> : <Visibility />} */}
+                        </IconButton>
+                    </InputAdornment>
+                }
+                label="Password"
+            />
+        </FormControl>
         {Array.from(loading ? Array(3) : softwares).map((data, index) => (
             <Grid item xs={2} sm={4} md={4} key={index}>
                 <SoftwareItem
