@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-
+import Pagination from '@mui/material/Pagination';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -52,9 +52,12 @@ const Page = () => {
             let _a = (area.length > 0 && area.length < areaList.length) ? "area=" + area.join("&area=") : ""
             let _t = (type.length > 0 && type.length < typeList.length) ? "type=" + type.join("&type=") : ""
             let _s = search.length > 0 ? "search=" + search : ""
+            // let _p = "&page=" + 1 + "&per=10"
             if (_a && _t) _t = "&" + _t
             if (_a && _s) _s = "&" + _s
             if (_t && _s) _s = "&" + _s
+
+
             const m = `?${_a}${_t}${_s}`
             const response = await API.GET()(`software/softs/${m}`)
             setSoftwares(response.data)
@@ -115,7 +118,7 @@ const Page = () => {
     }, [])
 
     return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
-        <Grid xs={12} alignItems="center" justifyContent="space-between" container item spacing={1}>
+        <Grid xs={12} alignItems="center" justifyContent="space-between" container item spacing={1} mb={2}>
             <Grid item xs={12} md>
                 <Typography variant="h5">
                     Evaluations
@@ -186,7 +189,9 @@ const Page = () => {
                     />
                 </FormControl>
             </Grid>
+
         </Grid>
+
         {Array.from(loading ? Array(3) : softwares).map((data, index) => (
             <Grid item xs={2} sm={4} md={4} key={index}>
                 <SoftwareItem
@@ -195,6 +200,18 @@ const Page = () => {
                 />
             </Grid>
         ))}
+        {/* {!loading && softwares.length > 0
+            ?
+            <Grid xs={12} alignItems="center" justifyContent="center" container item mb={2} mt={2}>
+                <Pagination
+                    count={10}
+                    variant="outlined"
+                    shape="rounded"
+                />
+            </Grid>
+            :
+            ""
+        } */}
         {!loading && softwares.length === 0
             ?
             <Layout>
