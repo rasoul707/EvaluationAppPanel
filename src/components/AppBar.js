@@ -247,7 +247,6 @@ const ResponsiveAppBar = () => {
                                 component={LinkRoute}
                                 to={"/profile"}
                             >
-
                                 <Stack direction="column" justifyContent="center" alignItems="center">
                                     <Stack direction="row" justifyContent="center" alignItems="center" sx={{ mb: 1, }}>
                                         <Avatar
@@ -268,12 +267,7 @@ const ResponsiveAppBar = () => {
                                             readOnly
                                         />
                                     </Stack>
-
-
-
                                 </Stack>
-
-
                             </MenuItem>
                             <Divider />
                             <MenuItem

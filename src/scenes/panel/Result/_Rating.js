@@ -5,6 +5,7 @@ import { Grid, Divider, Typography, List, ListItem, ListItemAvatar, Avatar, List
 
 import { PieChart, Detail } from './_Tools';
 
+import { MEDIABaseUrl } from "../../../config/server"
 
 
 
@@ -72,7 +73,10 @@ const Item = ({ data }) => {
                                     <Grid item xs={12} md={6}>
                                         <ListItem alignItems="flex-start">
                                             <ListItemAvatar>
-                                                <Avatar alt={first_name + " " + last_name} src={avatar || "/NO-AVATAR"} />
+                                                <Avatar
+                                                    alt={first_name + " " + last_name}
+                                                    src={avatar ? MEDIABaseUrl + avatar?.medium : "/NO-AVATAR"}
+                                                />
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={first_name + " " + last_name}

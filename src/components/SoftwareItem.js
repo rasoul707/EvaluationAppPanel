@@ -17,10 +17,14 @@ import InfoIcon from '@mui/icons-material/Info';
 
 
 
+
 const SoftwareItem = ({ data, noTools, isMySoftware }) => {
     const isLoading = !data
 
+
     const [openInfoDialog, setOpenInfoDialog] = React.useState(false)
+
+
 
     let size = 128
     let $tools = null
@@ -122,7 +126,6 @@ const SoftwareItem = ({ data, noTools, isMySoftware }) => {
             flexGrow: 1,
             backgroundColor: data?.is_active === false ? "#b3b3b3" : '#fff',
         }}
-
     >
 
         <Grid container spacing={2} justifyContent="center" alignItems="center">

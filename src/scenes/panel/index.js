@@ -17,6 +17,8 @@ import Home from "./Home"
 import Evaluations from "./Evaluations"
 import Result from "./Result"
 import Shop from "./Shop"
+import Users from "./Users"
+
 
 import VerifyDialog from "../../components/VerifyDialog"
 
@@ -66,6 +68,7 @@ const Panel = () => {
                         <Route path="/softwares" exact component={Softwares} />,
                         <Route path="/softwares/:softID/evaluation" exact component={DefineEvaluation} />,
                         <Route path="/softwares/:softID/result" exact component={Result} />,
+                        <Route path="/users" exact component={Users} />,
                     ]
                 }
                 <Route path="/settings" exact component={Settings} />

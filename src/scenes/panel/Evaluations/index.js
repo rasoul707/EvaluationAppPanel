@@ -38,6 +38,10 @@ const Page = () => {
 
     const [search, setSearch] = React.useState("")
 
+    const [total, setTotal] = React.useState(0)
+    const [page, setPage] = React.useState(1)
+    const [pageSize, setPageSize] = React.useState(12)
+
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -52,15 +56,16 @@ const Page = () => {
             let _a = (area.length > 0 && area.length < areaList.length) ? "area=" + area.join("&area=") : ""
             let _t = (type.length > 0 && type.length < typeList.length) ? "type=" + type.join("&type=") : ""
             let _s = search.length > 0 ? "search=" + search : ""
-            // let _p = "&page=" + 1 + "&per=10"
+            let _p = "p=" + page + "&per=" + pageSize
+
             if (_a && _t) _t = "&" + _t
-            if (_a && _s) _s = "&" + _s
-            if (_t && _s) _s = "&" + _s
+            if ((_a || _t) && _s) _s = "&" + _s
+            if (_a || _t || _s) _p = "&" + _p
 
-
-            const m = `?${_a}${_t}${_s}`
+            const m = `?${_a}${_t}${_s}${_p}`
             const response = await API.GET()(`software/softs/${m}`)
-            setSoftwares(response.data)
+            setSoftwares(response.data.results)
+            setTotal(response.data.count)
             setLoading(false)
             setDisabled(false)
         } catch (error) {
@@ -94,7 +99,6 @@ const Page = () => {
 
 
     const runApi = async () => {
-
         getSoftwaresList()
     }
 
@@ -118,7 +122,7 @@ const Page = () => {
     }, [])
 
     return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
-        <Grid xs={12} alignItems="center" justifyContent="space-between" container item spacing={1} mb={2}>
+        <Grid xs={12} alignItems="center" justifyContent="space-between" container item spacing={1} mb={1}>
             <Grid item xs={12} md>
                 <Typography variant="h5">
                     Evaluations
@@ -199,18 +203,20 @@ const Page = () => {
                 />
             </Grid>
         ))}
-        {/* {!loading && softwares.length > 0
+        {softwares.length > 0
             ?
             <Grid xs={12} alignItems="center" justifyContent="center" container item mb={2} mt={2}>
                 <Pagination
-                    count={10}
+                    count={Math.ceil(total / pageSize)}
+                    page={page}
+                    onChange={(e, num) => setPage(num)}
                     variant="outlined"
-                    shape="rounded"
+                    disabled={disabled}
                 />
             </Grid>
             :
             ""
-        } */}
+        }
         {!loading && softwares.length === 0
             ?
             <Layout>
