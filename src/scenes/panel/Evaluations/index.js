@@ -9,13 +9,15 @@ import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+
+
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
+import SearchIcon from '@mui/icons-material/Search';
 
 import Layout from "../../../components/Layout"
 
@@ -28,6 +30,15 @@ const Page = () => {
 
     const [softwares, setSoftwares] = React.useState([])
 
+    const [area, setArea] = React.useState([])
+    const [areaList, setAreaList] = React.useState([])
+
+    const [type, setType] = React.useState([])
+    const [typeList, setTypeList] = React.useState([])
+
+    const [search, setSearch] = React.useState("")
+
+
     const { enqueueSnackbar } = useSnackbar()
 
 
@@ -36,19 +47,66 @@ const Page = () => {
 
     const getSoftwaresList = async () => {
         try {
-            const response = await API.GET()(`software/softs/`)
+            setLoading(true)
+            setDisabled(true)
+            let _a = (area.length > 0 && area.length < areaList.length) ? "area=" + area.join("&area=") : ""
+            let _t = (type.length > 0 && type.length < typeList.length) ? "type=" + type.join("&type=") : ""
+            let _s = search.length > 0 ? "search=" + search : ""
+            if (_a && _t) _t = "&" + _t
+            if (_a && _s) _s = "&" + _s
+            if (_t && _s) _s = "&" + _s
+            const m = `?${_a}${_t}${_s}`
+            const response = await API.GET()(`software/softs/${m}`)
             setSoftwares(response.data)
+            setLoading(false)
+            setDisabled(false)
+        } catch (error) {
+            API.ResponseError(enqueueSnackbar, error)
+            setLoading(false)
+            setDisabled(false)
+        }
+    }
+
+    const getAreasList = async () => {
+        try {
+            const response = await API.GET()(`software/area/`)
+            setAreaList(response.data)
+            setArea(response.data.map(({ id }) => id))
         } catch (error) {
             API.ResponseError(enqueueSnackbar, error)
         }
     }
+
+    const getTypesList = async () => {
+        const data = [
+            { id: 'metric', name: 'Metric' },
+            { id: 'comment', name: 'Comment' },
+            { id: 'rating', name: 'Rating' },
+            { id: 'compare', name: 'Compare' },
+            { id: 'questionnaire', name: 'Questionnaire' },
+        ]
+        setTypeList(data)
+        setType(data.map(({ id }) => id))
+    }
+
+
+    const runApi = async () => {
+
+        getSoftwaresList()
+    }
+
+
+    React.useEffect(() => {
+        runApi()
+    }, [area, type])
 
     React.useEffect(() => {
         const data = async () => {
             setDisabled(true)
             setLoading(true)
             setTimeout(async () => {
-                await getSoftwaresList()
+                await getAreasList()
+                await getTypesList()
                 setDisabled(false)
                 setLoading(false)
             }, 1000)
@@ -57,30 +115,78 @@ const Page = () => {
     }, [])
 
     return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
-        <Typography mb={2}>
-            Evaluations
-        </Typography>
-        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-            <OutlinedInput
-                id="outlined-adornment-password"
-                type={'text'}
-                endAdornment={
-                    <InputAdornment position="end">
-                        <IconButton
-                            aria-label="toggle password visibility"
-                            // onClick={handleClickShowPassword}
-                            // onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                        >
-                            <Visibility />
-                            {/* {showPassword ? <VisibilityOff /> : <Visibility />} */}
-                        </IconButton>
-                    </InputAdornment>
-                }
-                label="Password"
-            />
-        </FormControl>
+        <Grid xs={12} alignItems="center" justifyContent="space-between" container item spacing={1}>
+            <Grid item xs={12} md>
+                <Typography variant="h5">
+                    Evaluations
+                </Typography>
+            </Grid>
+
+            <Grid item xs={6} md={2}>
+                <FormControl fullWidth >
+                    <InputLabel>Type</InputLabel>
+                    <Select
+                        label="Type"
+                        value={type}
+                        onChange={(e) => {
+                            let v = e.target.value
+                            if (v.includes("ALL")) v = typeList.map(({ id }) => id)
+                            setType(v)
+                        }}
+                        disabled={disabled}
+                        multiple
+                    >
+                        <MenuItem value="ALL"><em>All</em></MenuItem>
+                        {typeList.map(({ id, name }) => <MenuItem value={id}>{name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={6} md={2}>
+                <FormControl fullWidth >
+                    <InputLabel>Area</InputLabel>
+                    <Select
+                        label="Area"
+                        value={area}
+                        onChange={(e) => {
+                            let v = e.target.value
+                            if (v.includes("ALL")) v = areaList.map(({ id }) => id)
+                            setArea(v)
+                        }}
+                        disabled={disabled}
+                        multiple
+                    >
+                        <MenuItem value="ALL"><em>All</em></MenuItem>
+                        {areaList.map(({ id, name }) => <MenuItem value={id}>{name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} md={3} >
+                <FormControl sx={{ width: '100%' }} variant="outlined">
+                    <InputLabel htmlFor="search-box">Search...</InputLabel>
+                    <OutlinedInput
+                        id="search-box"
+                        type='text'
+                        disabled={disabled}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    onClick={runApi}
+                                    edge="end"
+                                >
+                                    <SearchIcon />
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                        label="Search..."
+                        value={search}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') runApi()
+                        }}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </FormControl>
+            </Grid>
+        </Grid>
         {Array.from(loading ? Array(3) : softwares).map((data, index) => (
             <Grid item xs={2} sm={4} md={4} key={index}>
                 <SoftwareItem
