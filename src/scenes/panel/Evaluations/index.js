@@ -189,7 +189,6 @@ const Page = () => {
                     />
                 </FormControl>
             </Grid>
-
         </Grid>
 
         {Array.from(loading ? Array(3) : softwares).map((data, index) => (

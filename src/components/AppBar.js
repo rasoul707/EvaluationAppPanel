@@ -21,7 +21,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Badge from '@mui/material/Badge';
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
-
+import Rating from '@mui/material/Rating'
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoIcon from '@mui/icons-material/TableChart';
 import NewSoftIcon from '@mui/icons-material/Add';
@@ -31,7 +31,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ShopIcon from '@mui/icons-material/Shop';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-
+import VerifiedIcon from '@mui/icons-material/Verified';
 import * as API from "../api"
 
 
@@ -247,14 +247,32 @@ const ResponsiveAppBar = () => {
                                 component={LinkRoute}
                                 to={"/profile"}
                             >
-                                <Avatar
-                                    alt={user.first_name + ' ' + user.last_name}
-                                    src={user.avatar?.medium ?? "/no-avatar"}
-                                />
-                                <Stack direction="column">
-                                    {user.first_name + ' ' + user.last_name}
-                                    <Chip label={user.user_level} size="small" />
+
+                                <Stack direction="column" justifyContent="center" alignItems="center">
+                                    <Stack direction="row" justifyContent="center" alignItems="center" sx={{ mb: 1, }}>
+                                        <Avatar
+                                            alt={user.first_name + ' ' + user.last_name}
+                                            src={user.avatar?.medium ?? "/no-avatar"}
+                                        />
+                                        {user.is_verified && <VerifiedIcon sx={{ mr: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                                        {user.first_name + ' ' + user.last_name}
+                                    </Stack>
+                                    <Chip label={user.user_level} sx={{ width: "100%", mb: 1 }} />
+                                    <Divider sx={{ width: "100%" }} />
+                                    <Stack direction="column" justifyContent="center" alignItems="center" sx={{ mt: 1 }}>
+                                        <Box sx={{ ml: 1 }}>(score: {user.evaluator_scores})</Box>
+                                        <Rating
+                                            max={5}
+                                            value={user.stars / 2}
+                                            precision={0.5}
+                                            readOnly
+                                        />
+                                    </Stack>
+
+
+
                                 </Stack>
+
 
                             </MenuItem>
                             <Divider />
