@@ -3,17 +3,23 @@
 import * as React from 'react';
 import { Grid, Divider, Typography } from '@mui/material';
 
-import { PieChart, BarChart, Detail } from './_Tools';
+import { PieChart, BarChart, Detail, UserDataTable, StarUser } from './_Tools';
 
 
 
-
-
+import VerifiedIcon from '@mui/icons-material/Verified';
+import Rating from '@mui/material/Rating'
+import Stack from '@mui/material/Stack'
+import Avatar from '@mui/material/Avatar'
+import { MEDIABaseUrl } from "../../../config/server"
 
 
 
 
 const Item = ({ data }) => {
+
+    const [showDetail, setShowDetail] = React.useState(false)
+
 
     let degreeChart = {}
     let byDegreeChart = []
@@ -56,7 +62,8 @@ const Item = ({ data }) => {
                         published={data.published_datetime}
                         max={data.max}
                         evaluates={data.evaluates}
-                        excelData={[]}
+                        setShowDetail={() => setShowDetail(!showDetail)}
+                        showDetail={showDetail}
                     />
                 </Grid>
             </Grid>
@@ -67,10 +74,78 @@ const Item = ({ data }) => {
                 }
             </Grid>
             <Grid item xs={12} key={2} textAlign='center'>
-                {byParamChartOP?.length
+                {showDetail &&
+                    <UserDataTable
+                        headers={[
+                            {
+                                id: 'name',
+                                numeric: false,
+                                disablePadding: true,
+                                label: 'Name',
+                            },
+                            {
+                                id: 'degree',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Degree',
+                            },
+                            {
+                                id: 'date',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Date',
+                            },
+                            {
+                                id: 'rating',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Parameters',
+                            },
+                            {
+                                id: 'tools',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Tools',
+                            },
+                        ]}
+                    // rows={byList.map(({ id, evaluated_by: user, rating, date }) => {
+                    //     return {
+                    //         id,
+                    //         name: <>
+                    //             <Stack direction="row" alignItems="center">
+                    //                 <Avatar
+                    //                     alt={user.first_name + " " + user.last_name}
+                    //                     src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
+                    //                 />
+                    //                 <Rating
+                    //                     max={5}
+                    //                     value={8 / 2}
+                    //                     precision={0.5}
+                    //                     readOnly
+                    //                 />
+                    //                 ({user.evaluator_scores})
+                    //             </Stack>
+                    //             <Stack direction="row" alignItems="center">
+                    //                 {user.first_name + " " + user.last_name}{<VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                    //             </Stack>
+                    //             <Stack direction="row" alignItems="center">
+                    //                 {user.email}
+                    //             </Stack>
+                    //         </>,
+                    //         degree: user.degree.title,
+                    //         date: date || "-",
+                    //         rating: rating,
+                    //         tools: <StarUser type="comment" pid={1} score={null} />
+                    //     }
+                    // })}
+                    />
+                }
+            </Grid>
+            <Grid item xs={12} key={2} textAlign='center'>
+                {showDetail && (byParamChartOP?.length
                     ? <BarChart params={byParamChartOP} data={[byParamChat]} title={"Metric"} />
                     : <Typography variant='button' >[No result]</Typography>
-                }
+                )}
             </Grid>
         </Grid >
 

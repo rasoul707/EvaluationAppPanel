@@ -26,6 +26,8 @@ const score2Title = (score, custom_options, options) => {
 const Item = ({ data }) => {
 
     const [previewVisible, setPreviewVisible] = React.useState(null)
+    const [showDetail, setShowDetail] = React.useState(false)
+
 
     let degreeChart = {}
     let byDegreeChart = []
@@ -88,7 +90,8 @@ const Item = ({ data }) => {
                         published={data.published_datetime}
                         max={data.max}
                         evaluates={data.evaluates}
-                        excelData={[]}
+                        setShowDetail={() => setShowDetail(!showDetail)}
+                        showDetail={showDetail}
                     />
                 </Grid>
             </Grid>

@@ -1,15 +1,22 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Grid, Divider, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, Rating, } from '@mui/material';
+import { Grid, Divider, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, } from '@mui/material';
 
-import { PieChart, Detail } from './_Tools';
+import { PieChart, Detail, UserDataTable, StarUser } from './_Tools';
 
 import { MEDIABaseUrl } from "../../../config/server"
 
 
+import VerifiedIcon from '@mui/icons-material/Verified';
+import Box from '@mui/material/Box';
+import Rating from '@mui/material/Rating'
+import Stack from '@mui/material/Stack'
 
 const Item = ({ data }) => {
+
+    const [showDetail, setShowDetail] = React.useState(false)
+
 
     let degreeChart = {}
     let byDegreeChart = []
@@ -43,7 +50,8 @@ const Item = ({ data }) => {
                         published={data.published_datetime}
                         max={data.max}
                         evaluates={data.evaluates}
-                        excelData={[]}
+                        setShowDetail={() => setShowDetail(!showDetail)}
+                        showDetail={showDetail}
                         extra={<>
                             <Rating
                                 max={5}
@@ -53,6 +61,7 @@ const Item = ({ data }) => {
                             />
                         </>
                         }
+
                     />
                 </Grid>
             </Grid>
@@ -63,41 +72,71 @@ const Item = ({ data }) => {
                 }
             </Grid>
             <Grid item xs={12} key={2} textAlign='center'>
-                {byList?.length
-                    ?
-                    <List sx={{ height: "150px", overflowX: "hidden" }}>
-                        <Grid container spacing={1}>
-                            {byList.map(({ rating, evaluated_by }) => {
-                                const { first_name, last_name, avatar } = evaluated_by
-                                return <>
-                                    <Grid item xs={12} md={6}>
-                                        <ListItem alignItems="flex-start">
-                                            <ListItemAvatar>
-                                                <Avatar
-                                                    alt={first_name + " " + last_name}
-                                                    src={avatar ? MEDIABaseUrl + avatar?.medium : "/NO-AVATAR"}
-                                                />
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary={first_name + " " + last_name}
-                                                secondary={
-                                                    <React.Fragment>
-                                                        <Rating
-                                                            max={5}
-                                                            value={rating / 2}
-                                                            precision={0.5}
-                                                            readOnly
-                                                        />
-                                                    </React.Fragment>
-                                                }
-                                            />
-                                        </ListItem>
-                                    </Grid>
-                                </>
-                            })}
-                        </Grid>
-                    </List>
-                    : <Typography variant='button' >[No result]</Typography>
+                {showDetail &&
+                    <UserDataTable
+                        headers={[
+                            {
+                                id: 'name',
+                                numeric: false,
+                                disablePadding: true,
+                                label: 'Name',
+                            },
+                            {
+                                id: 'degree',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Degree',
+                            },
+                            {
+                                id: 'date',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Date',
+                            },
+                            {
+                                id: 'rating',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Rating',
+                            },
+                            {
+                                id: 'tools',
+                                numeric: false,
+                                disablePadding: false,
+                                label: 'Tools',
+                            },
+                        ]}
+                        rows={byList.map(({ id, evaluated_by: user, rating, date }) => {
+                            return {
+                                id,
+                                name: <>
+                                    <Stack direction="row" alignItems="center">
+                                        <Avatar
+                                            alt={user.first_name + " " + user.last_name}
+                                            src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
+                                        />
+                                        <Rating
+                                            max={5}
+                                            value={8 / 2}
+                                            precision={0.5}
+                                            readOnly
+                                        />
+                                        ({user.evaluator_scores})
+                                    </Stack>
+                                    <Stack direction="row" alignItems="center">
+                                        {user.first_name + " " + user.last_name}{<VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                                    </Stack>
+                                    <Stack direction="row" alignItems="center">
+                                        {user.email}
+                                    </Stack>
+                                </>,
+                                degree: user.degree.title,
+                                date: date || "-",
+                                rating: rating,
+                                tools: <StarUser type="comment" pid={1} score={null} />
+                            }
+                        })}
+                    />
                 }
             </Grid>
         </Grid >

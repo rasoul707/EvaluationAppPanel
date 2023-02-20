@@ -69,6 +69,7 @@ const UserItem = ({ data, disabled, myProjects }) => {
         <InviteEvaluation
             open={openInviteDialog}
             handleClose={() => setOpenInviteDialog(false)}
+            userID={user?.id}
             name={user?.first_name + ' ' + user?.last_name}
             myProjects={myProjects}
         />

@@ -13,6 +13,9 @@ import { PieChart, BarChart, Detail } from './_Tools';
 
 const Item = ({ data }) => {
 
+    const [showDetail, setShowDetail] = React.useState(false)
+
+
     let degreeChart = {}
     let byDegreeChart = []
     for (let i = 0; i < data.by_degree.length; i++) {
@@ -59,7 +62,8 @@ const Item = ({ data }) => {
                         published={data.published_datetime}
                         max={data.max}
                         evaluates={data.evaluates}
-                        excelData={[]}
+                        setShowDetail={() => setShowDetail(!showDetail)}
+                        showDetail={showDetail}
                     />
                 </Grid>
             </Grid>
