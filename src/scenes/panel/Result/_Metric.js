@@ -116,7 +116,7 @@ const Item = ({ data }) => {
                                 label: 'Tools',
                             },
                         ]}
-                        rows={byList.map(({ id, evaluated_by: user, parameters, datetime }) => {
+                        rows={byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
                             return {
                                 id,
                                 name: <>
@@ -134,7 +134,7 @@ const Item = ({ data }) => {
                                         ({user.evaluator_scores})
                                     </Stack>
                                     <Stack direction="row" alignItems="center">
-                                        {user.first_name + " " + user.last_name}{<VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                                        {user.first_name + " " + user.last_name}{user.is_verified && <VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
                                     </Stack>
                                     <Stack direction="row" alignItems="center">
                                         {user.email}
@@ -142,7 +142,7 @@ const Item = ({ data }) => {
                                 </>,
                                 degree: user.degree.title,
                                 date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
-                                parameters: parameters.map(({ id, title, value }) => {
+                                parameters: parameters?.map(({ id, title, value }) => {
                                     return <Stack direction="column" alignItems="stretch">
                                         <Typography>{title}</Typography>
                                         <Slider

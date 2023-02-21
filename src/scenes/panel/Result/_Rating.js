@@ -107,7 +107,7 @@ const Item = ({ data }) => {
                                 label: 'Tools',
                             },
                         ]}
-                        rows={byList.map(({ id, evaluated_by: user, rating, datetime }) => {
+                        rows={byList?.map(({ id, evaluated_by: user, rating, datetime }) => {
                             return {
                                 id,
                                 name: <>
@@ -125,7 +125,7 @@ const Item = ({ data }) => {
                                         ({user.evaluator_scores})
                                     </Stack>
                                     <Stack direction="row" alignItems="center">
-                                        {user.first_name + " " + user.last_name}{<VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                                        {user.first_name + " " + user.last_name}{user.is_verified && <VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
                                     </Stack>
                                     <Stack direction="row" alignItems="center">
                                         {user.email}
