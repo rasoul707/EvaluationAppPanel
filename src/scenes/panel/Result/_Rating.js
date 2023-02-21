@@ -12,6 +12,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import Box from '@mui/material/Box';
 import Rating from '@mui/material/Rating'
 import Stack from '@mui/material/Stack'
+import moment from 'moment';
 
 const Item = ({ data }) => {
 
@@ -106,7 +107,7 @@ const Item = ({ data }) => {
                                 label: 'Tools',
                             },
                         ]}
-                        rows={byList.map(({ id, evaluated_by: user, rating, date }) => {
+                        rows={byList.map(({ id, evaluated_by: user, rating, datetime }) => {
                             return {
                                 id,
                                 name: <>
@@ -117,7 +118,7 @@ const Item = ({ data }) => {
                                         />
                                         <Rating
                                             max={5}
-                                            value={8 / 2}
+                                            value={user.stars / 2}
                                             precision={0.5}
                                             readOnly
                                         />
@@ -131,7 +132,7 @@ const Item = ({ data }) => {
                                     </Stack>
                                 </>,
                                 degree: user.degree.title,
-                                date: date || "-",
+                                date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
                                 rating: rating,
                                 tools: <StarUser type="comment" pid={1} score={null} />
                             }

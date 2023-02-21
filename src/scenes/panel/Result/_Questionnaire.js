@@ -92,6 +92,53 @@ const Item = ({ data }) => {
                         evaluates={data.evaluates}
                         setShowDetail={() => setShowDetail(!showDetail)}
                         showDetail={showDetail}
+                        chartWidth={800}
+                        chart={Object.keys(byParameterChart).length
+                            ?
+                            <Grid container item spacing={2}>
+                                {Object.keys(byParameterChart).map((paramID) => {
+                                    const { name, questions } = byParameterChart[paramID]
+                                    return <>
+                                        <List
+                                            sx={{ width: '100%', bgcolor: 'background.paper' }}
+                                            subheader={
+                                                <ListItemButton
+                                                    component="div"
+                                                    onClick={() => {
+                                                        setPreviewVisible(previewVisible === paramID ? null : paramID)
+                                                    }}
+                                                >
+                                                    - {name}
+                                                    {previewVisible === paramID ? <ExpandLess /> : <ExpandMore />}
+                                                </ListItemButton>
+                                            }
+                                        >
+                                            <Grid container>
+                                                <Collapse in={previewVisible === paramID} timeout="auto" unmountOnExit sx={{ pl: 2, width: "100%" }}>
+                                                    <List
+                                                        sx={{
+                                                            width: '100%',
+                                                            position: 'relative',
+                                                            overflowX: 'hidden',
+                                                            '& ul': { padding: 0 },
+                                                        }}
+                                                    >
+                                                        <Grid container item spacing={2} alignItems="center" justifyContent="center">
+                                                            {Object.keys(questions).map((quID) => {
+                                                                const { title, data } = questions[quID]
+                                                                return <Grid item md={6} xs={12} key={1}>
+                                                                    <PieChart data={data} title={title} />
+                                                                </Grid>
+                                                            })}
+                                                        </Grid>
+                                                    </List>
+                                                </Collapse>
+                                            </Grid>
+                                        </List>
+                                    </>
+                                })}
+                            </Grid >
+                            : <Typography variant='button' >[No result]</Typography>}
                     />
                 </Grid>
             </Grid>
@@ -102,53 +149,7 @@ const Item = ({ data }) => {
                 }
             </Grid>
             <Grid item xs={12} key={2} textAlign='center'>
-                {Object.keys(byParameterChart).length
-                    ?
-                    <Grid container item spacing={2}>
-                        {Object.keys(byParameterChart).map((paramID) => {
-                            const { name, questions } = byParameterChart[paramID]
-                            return <>
-                                <List
-                                    sx={{ width: '100%', bgcolor: 'background.paper' }}
-                                    subheader={
-                                        <ListItemButton
-                                            component="div"
-                                            onClick={() => {
-                                                setPreviewVisible(previewVisible === paramID ? null : paramID)
-                                            }}
-                                        >
-                                            - {name}
-                                            {previewVisible === paramID ? <ExpandLess /> : <ExpandMore />}
-                                        </ListItemButton>
-                                    }
-                                >
-                                    <Grid container>
-                                        <Collapse in={previewVisible === paramID} timeout="auto" unmountOnExit sx={{ pl: 2, width: "100%" }}>
-                                            <List
-                                                sx={{
-                                                    width: '100%',
-                                                    position: 'relative',
-                                                    overflow: 'auto',
-                                                    maxHeight: 400,
-                                                    '& ul': { padding: 0 },
-                                                }}
-                                            >
-                                                <Grid container item spacing={2} alignItems="center" justifyContent="center">
-                                                    {Object.keys(questions).map((quID) => {
-                                                        const { title, data } = questions[quID]
-                                                        return <Grid item md={6} xs={12} key={1}>
-                                                            <PieChart data={data} title={title} />
-                                                        </Grid>
-                                                    })}
-                                                </Grid>
-                                            </List>
-                                        </Collapse>
-                                    </Grid>
-                                </List>
-                            </>
-                        })}
-                    </Grid >
-                    : <Typography variant='button' >[No result]</Typography>}
+
             </Grid>
 
         </Grid >

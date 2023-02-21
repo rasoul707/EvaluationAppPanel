@@ -29,11 +29,16 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-
+import EqualizerIcon from '@mui/icons-material/Equalizer';
 
 import Rating from '@mui/material/Rating'
 import Stack from '@mui/material/Stack';
 import StarsIcon from '@mui/icons-material/Stars';
+
+
+import { Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
+import moment from 'moment';
+
 
 const colors = scaleOrdinal(schemeCategory10).range();
 
@@ -107,7 +112,9 @@ export const BarChart = ({ data, params, title }) => {
 
 
 
-export const Detail = ({ title, completed, deadline, published, max, evaluates, showDetail, setShowDetail, extra }) => {
+export const Detail = ({ title, completed, deadline, published, max, evaluates, showDetail, setShowDetail, extra, chart, chartWidth = 500 }) => {
+
+    const [openChart, setOpenChart] = React.useState(false);
 
     return <>
         <Typography variant='h6' textAlign='center'>
@@ -117,7 +124,7 @@ export const Detail = ({ title, completed, deadline, published, max, evaluates, 
             <b>Evaluators: </b>{evaluates} / {max}
         </Typography>
         <Typography variant='subtitle1' textAlign='center'>
-            <b>Published:</b> {published}
+            <b>Published:</b> {moment(published).format("YYYY-MM-DD HH:mm")}
         </Typography>
         {evaluates === max &&
             <Typography variant='subtitle1' textAlign='center'>
@@ -125,17 +132,36 @@ export const Detail = ({ title, completed, deadline, published, max, evaluates, 
             </Typography>
         }
         <Typography variant='subtitle1' textAlign='center'>
-            <b>Deadline:</b> {deadline}
+            <b>Deadline:</b> {moment(deadline).format("YYYY-MM-DD")}
         </Typography>
         {extra}
+        <Stack direction="row" columnGap={1} justifyContent="center" alignItems="center" sx={{ mt: 2 }}>
+            <Button
+                children={showDetail ? "Hide detail" : "Show detail"}
+                variant='contained'
+                onClick={setShowDetail}
+            />
+            {chart &&
+                <IconButton color='warning' onClick={() => setOpenChart(true)}>
+                    <EqualizerIcon />
+                </IconButton>
+            }
 
-        <Button
-            children={showDetail ? "Hide detail" : "Show detail"}
-            variant='contained'
-            onClick={setShowDetail}
-            sx={{ mt: 2 }}
-        />
+        </Stack>
 
+
+        <Dialog
+            open={openChart}
+            onClose={() => setOpenChart(false)}
+        >
+            <DialogTitle>Charts</DialogTitle>
+            <DialogContent sx={{ minWidth: "500px", width: `${chartWidth}px` }}>
+                {chart}
+            </DialogContent>
+            {/* <DialogActions> */}
+            <Button children="ok" onClick={() => setOpenChart(false)} />
+            {/* </DialogActions> */}
+        </Dialog>
 
     </>
 }

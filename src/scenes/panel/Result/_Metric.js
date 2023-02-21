@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Grid, Divider, Typography } from '@mui/material';
+import { Grid, Divider, Typography, Slider } from '@mui/material';
 
 import { PieChart, BarChart, Detail, UserDataTable, StarUser } from './_Tools';
 
@@ -12,6 +12,7 @@ import Rating from '@mui/material/Rating'
 import Stack from '@mui/material/Stack'
 import Avatar from '@mui/material/Avatar'
 import { MEDIABaseUrl } from "../../../config/server"
+import moment from 'moment';
 
 
 
@@ -51,6 +52,9 @@ const Item = ({ data }) => {
         byParamChat[p.name] /= p.data.length
     }
 
+    let byList = data.by_list
+
+
     return <>
         <Grid container item spacing={2} alignItems="center" justifyContent="center">
             <Grid item md={6} xs={12} key={0}>
@@ -64,6 +68,10 @@ const Item = ({ data }) => {
                         evaluates={data.evaluates}
                         setShowDetail={() => setShowDetail(!showDetail)}
                         showDetail={showDetail}
+                        chart={byParamChartOP?.length
+                            ? <BarChart params={byParamChartOP} data={[byParamChat]} title={"Metric"} />
+                            : <Typography variant='button' >[No result]</Typography>
+                        }
                     />
                 </Grid>
             </Grid>
@@ -96,7 +104,7 @@ const Item = ({ data }) => {
                                 label: 'Date',
                             },
                             {
-                                id: 'rating',
+                                id: 'parameters',
                                 numeric: false,
                                 disablePadding: false,
                                 label: 'Parameters',
@@ -108,44 +116,52 @@ const Item = ({ data }) => {
                                 label: 'Tools',
                             },
                         ]}
-                    // rows={byList.map(({ id, evaluated_by: user, rating, date }) => {
-                    //     return {
-                    //         id,
-                    //         name: <>
-                    //             <Stack direction="row" alignItems="center">
-                    //                 <Avatar
-                    //                     alt={user.first_name + " " + user.last_name}
-                    //                     src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
-                    //                 />
-                    //                 <Rating
-                    //                     max={5}
-                    //                     value={8 / 2}
-                    //                     precision={0.5}
-                    //                     readOnly
-                    //                 />
-                    //                 ({user.evaluator_scores})
-                    //             </Stack>
-                    //             <Stack direction="row" alignItems="center">
-                    //                 {user.first_name + " " + user.last_name}{<VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
-                    //             </Stack>
-                    //             <Stack direction="row" alignItems="center">
-                    //                 {user.email}
-                    //             </Stack>
-                    //         </>,
-                    //         degree: user.degree.title,
-                    //         date: date || "-",
-                    //         rating: rating,
-                    //         tools: <StarUser type="comment" pid={1} score={null} />
-                    //     }
-                    // })}
+                        rows={byList.map(({ id, evaluated_by: user, parameters, datetime }) => {
+                            return {
+                                id,
+                                name: <>
+                                    <Stack direction="row" alignItems="center">
+                                        <Avatar
+                                            alt={user.first_name + " " + user.last_name}
+                                            src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
+                                        />
+                                        <Rating
+                                            max={5}
+                                            value={user.stars / 2}
+                                            precision={0.5}
+                                            readOnly
+                                        />
+                                        ({user.evaluator_scores})
+                                    </Stack>
+                                    <Stack direction="row" alignItems="center">
+                                        {user.first_name + " " + user.last_name}{<VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                                    </Stack>
+                                    <Stack direction="row" alignItems="center">
+                                        {user.email}
+                                    </Stack>
+                                </>,
+                                degree: user.degree.title,
+                                date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
+                                parameters: parameters.map(({ id, title, value }) => {
+                                    return <Stack direction="column" alignItems="stretch">
+                                        <Typography>{title}</Typography>
+                                        <Slider
+                                            step={1}
+                                            marks
+                                            min={0}
+                                            max={10}
+                                            value={value}
+                                            readOnly
+                                            size="small"
+                                            color="warning"
+                                        />
+                                    </Stack>
+                                }),
+                                tools: <StarUser type="comment" pid={1} score={null} />
+                            }
+                        })}
                     />
                 }
-            </Grid>
-            <Grid item xs={12} key={2} textAlign='center'>
-                {showDetail && (byParamChartOP?.length
-                    ? <BarChart params={byParamChartOP} data={[byParamChat]} title={"Metric"} />
-                    : <Typography variant='button' >[No result]</Typography>
-                )}
             </Grid>
         </Grid >
 
