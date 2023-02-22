@@ -38,7 +38,11 @@ import StarsIcon from '@mui/icons-material/Stars';
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
 import moment from 'moment';
+import UserBioDialog from "../../../components/UserBioDialog"
 
+import VerifiedIcon from '@mui/icons-material/Verified';
+import Avatar from '@mui/material/Avatar'
+import { MEDIABaseUrl } from "../../../config/server"
 
 const colors = scaleOrdinal(schemeCategory10).range();
 
@@ -385,5 +389,48 @@ export const StarUser = ({ type = "metric", pid, score = null }) => {
                 </Stack>
             </Popover>
         </Stack>
+    </>
+}
+
+
+
+
+
+export const UserDetail = ({ user }) => {
+    const [openUserBioDialog, setUserBioDialog] = React.useState(false)
+    return <>
+        <Stack sx={{ cursor: "pointer" }} onClick={() => setUserBioDialog(true)}>
+            <Stack direction="row" alignItems="center">
+                <Avatar
+                    alt={user.first_name + " " + user.last_name}
+                    src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
+                    sx={{ mr: 2 }}
+                />
+                <Rating
+                    max={5}
+                    value={user.stars / 2}
+                    precision={0.5}
+                    readOnly
+                />
+                ({user.evaluator_scores})
+            </Stack>
+            <Stack direction="row" alignItems="center">
+                {user.first_name + " " + user.last_name}{user.is_verified && <VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+            </Stack>
+            <Stack direction="row" alignItems="center">
+                {user.email}
+            </Stack>
+        </Stack>
+        <UserBioDialog
+            open={openUserBioDialog}
+            handleClose={() => { setUserBioDialog(false) }}
+            userID={user?.id}
+            name={user?.first_name + ' ' + user?.last_name}
+            bio={user?.bio}
+            is_verified={user?.is_verified}
+            avatar={user?.avatar}
+            stars={user?.stars}
+            evaluator_scores={user?.evaluator_scores}
+        />
     </>
 }

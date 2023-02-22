@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Grid, Divider, Typography, Slider } from '@mui/material';
 
-import { PieChart, BarChart, Detail, UserDataTable, StarUser } from './_Tools';
+import { PieChart, BarChart, Detail, UserDataTable, StarUser, UserDetail } from './_Tools';
 
 
 
@@ -125,27 +125,7 @@ const Item = ({ data }) => {
                         rows={byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
                             return {
                                 id,
-                                name: <>
-                                    <Stack direction="row" alignItems="center">
-                                        <Avatar
-                                            alt={user.first_name + " " + user.last_name}
-                                            src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
-                                        />
-                                        <Rating
-                                            max={5}
-                                            value={user.stars / 2}
-                                            precision={0.5}
-                                            readOnly
-                                        />
-                                        ({user.evaluator_scores})
-                                    </Stack>
-                                    <Stack direction="row" alignItems="center">
-                                        {user.first_name + " " + user.last_name}{user.is_verified && <VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
-                                    </Stack>
-                                    <Stack direction="row" alignItems="center">
-                                        {user.email}
-                                    </Stack>
-                                </>,
+                                name: <UserDetail user={user} />,
                                 degree: user.degree.title,
                                 date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
                                 parameters: parameters?.map(({ id, title, value }) => {

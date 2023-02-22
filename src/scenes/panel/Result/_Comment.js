@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Grid, Divider, Avatar, Tooltip, Popover, Button, } from '@mui/material';
 
-import { PieChart, Detail, UserDataTable, StarUser } from './_Tools';
+import { PieChart, Detail, UserDataTable, StarUser, UserDetail } from './_Tools';
 import { MEDIABaseUrl } from "../../../config/server"
 
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -96,27 +96,7 @@ const Item = ({ data }) => {
                         rows={byList?.map(({ id, evaluated_by: user, comment, datetime }) => {
                             return {
                                 id,
-                                name: <>
-                                    <Stack direction="row" alignItems="center">
-                                        <Avatar
-                                            alt={user.first_name + " " + user.last_name}
-                                            src={user.avatar ? MEDIABaseUrl + user.avatar?.medium : "/NO-AVATAR"}
-                                        />
-                                        <Rating
-                                            max={5}
-                                            value={user.stars / 2}
-                                            precision={0.5}
-                                            readOnly
-                                        />
-                                        ({user.evaluator_scores})
-                                    </Stack>
-                                    <Stack direction="row" alignItems="center">
-                                        {user.first_name + " " + user.last_name}{user.is_verified && <VerifiedIcon sx={{ ml: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
-                                    </Stack>
-                                    <Stack direction="row" alignItems="center">
-                                        {user.email}
-                                    </Stack>
-                                </>,
+                                name: <UserDetail user={user} />,
                                 degree: user.degree.title,
                                 date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
                                 comment: comment,
