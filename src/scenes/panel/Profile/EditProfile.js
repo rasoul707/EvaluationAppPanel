@@ -6,6 +6,7 @@ import { LoadingButton } from '@mui/lab'
 import * as API from "../../../api";
 import { useSnackbar } from 'notistack';
 import { useSelector, useDispatch } from "react-redux";
+import { Editor } from '@tinymce/tinymce-react';
 
 
 
@@ -25,13 +26,17 @@ const EditProfile = ({ setDisabled, setLoading, disabled, loading }) => {
     const [phoneNumber, setPhoneNumber] = React.useState(user.phone_number)
     const [avatar, setAvatar] = React.useState(user.avatar)
     const [degreesList, setDegreesList] = React.useState([])
+    const editorRef = React.useRef(null);
+
+
 
     const submit = async () => {
         const data = {
             first_name,
             last_name,
             degree_id: degree,
-            avatar_id: avatar?.id
+            avatar_id: avatar?.id,
+            bio: editorRef?.current?.getContent() || "",
         }
 
         setDisabled(true)
@@ -191,6 +196,32 @@ const EditProfile = ({ setDisabled, setLoading, disabled, loading }) => {
                 disabled={disabled || true}
             />
 
+
+            <Editor
+                apiKey={"c5202p0ybgpmcrokfgwn78asoww5xabm9hxbqxxvzxwgsmhg"}
+                onInit={(evt, editor) => editorRef.current = editor}
+                initialValue={user.bio}
+                init={{
+                    height: 400,
+                    menubar: false,
+                    plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount', 'directionality'
+                    ],
+                    toolbar: 'undo redo | blocks | ' +
+                        'image | ' +
+                        'bold italic forecolor | alignleft aligncenter ' +
+                        'alignright alignjustify | ltr rtl | bullist numlist outdent indent | ' +
+                        'removeformat | help |',
+                    content_style:
+                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px, }"
+                }}
+
+            />
+
+            <br />
+
             <LoadingButton
                 variant="contained"
                 size="large"
@@ -206,3 +237,11 @@ const EditProfile = ({ setDisabled, setLoading, disabled, loading }) => {
 }
 
 export default EditProfile
+
+
+
+
+
+
+
+
