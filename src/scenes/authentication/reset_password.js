@@ -59,7 +59,7 @@ const ResetPassword = () => {
         setLoading(true)
 
         try {
-            await API.POST(false)('/auth/password/reset/confirm/', data)
+            await API.POST(false)('auth/password/reset/confirm/', data)
             setLoading(false)
 
             enqueueSnackbar("Password has been reset successfully", { variant: 'success' })
