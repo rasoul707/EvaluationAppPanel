@@ -67,9 +67,9 @@ const Shop = () => {
     const [payPrice, setPayPrice] = React.useState(null)
     const [payScore, setPayScore] = React.useState(null)
 
-    return <Grid container spacing={2} columns={{ xs: 1, sm: 1, md: 8, lg: 12 }} sx={{ mb: 2 }}>
+    return <Grid container spacing={2} columns={{ xs: 6, sm: 6, md: 8, lg: 12 }} sx={{ mb: 2 }}>
         {shop.map(({ id, score, price }, index) => {
-            return <Grid item xs={2} sm={4} md={4} key={index}>
+            return <Grid item xs={3} sm={2} key={index}>
                 <Card>
                     <CardActionArea>
                         <CardMedia
