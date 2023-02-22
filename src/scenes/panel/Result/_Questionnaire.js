@@ -1,22 +1,15 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { Grid, Divider, Collapse, List, ListItemButton, Typography } from '@mui/material';
+import { Grid, Divider, Collapse, List, ListItemButton, Typography, Chip, } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-
-
-import { Slider } from '@mui/material';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 import { PieChart, Detail, UserDataTable, StarUser, UserDetail } from './_Tools';
 
-
-
-import VerifiedIcon from '@mui/icons-material/Verified';
-import Rating from '@mui/material/Rating'
 import Stack from '@mui/material/Stack'
-import Avatar from '@mui/material/Avatar'
-import { MEDIABaseUrl } from "../../../config/server"
+
 import moment from 'moment';
 
 const defOptions = {
@@ -163,60 +156,26 @@ const Item = ({ data }) => {
             <Grid item xs={12} key={2} textAlign='center'>
                 {showDetail &&
                     <UserDataTable
-                        headers={[
-                            {
-                                id: 'name',
-                                numeric: false,
-                                disablePadding: true,
-                                label: 'Name',
-                            },
-                            {
-                                id: 'degree',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Degree',
-                            },
-                            {
-                                id: 'date',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Date',
-                            },
-                            {
-                                id: 'parameters',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Parameters',
-                            },
-                            {
-                                id: 'tools',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Tools',
-                            },
-                        ]}
                         rows={byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
                             return {
                                 id,
                                 name: <UserDetail user={user} />,
                                 degree: user.degree.title,
                                 date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
-                                parameters: parameters?.map(({ id, title, value }) => {
+                                tools: <StarUser type="questionnaire" pid={data.id} uid={user.id} />,
+                                detail: Object.keys(parameters)?.map((v) => {
+                                    const { id, name, questions } = parameters[v]
                                     return <Stack direction="column" alignItems="stretch">
-                                        <Typography>{title}</Typography>
-                                        <Slider
-                                            step={1}
-                                            marks
-                                            min={0}
-                                            max={10}
-                                            value={value}
-                                            readOnly
-                                            size="small"
-                                            color="warning"
-                                        />
+                                        <Chip color='secondary' label={name} sx={{ mb: 2, mt: 1 }} />
+                                        {questions?.map(({ answer, custom_options, options, question }) => {
+                                            const _op = custom_options ? options : "Useless|Poor|Ok|Good|Excellent"
+                                            return <Stack direction="row" alignItems="stretch" sx={{ p: 1, }}>
+                                                <Typography sx={{ display: "flex" }}>{question} </Typography>
+                                                <Chip size='small' color='success' label={_op.split("|")[answer - 1]} sx={{ ml: 1, }} />
+                                            </Stack>
+                                        })}
                                     </Stack>
                                 }),
-                                tools: <StarUser type="comment" pid={1} score={null} />
                             }
                         })}
                     />

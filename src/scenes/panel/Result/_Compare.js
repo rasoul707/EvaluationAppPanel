@@ -90,45 +90,14 @@ const Item = ({ data }) => {
             <Grid item xs={12} key={2} textAlign='center'>
                 {showDetail &&
                     <UserDataTable
-                        headers={[
-                            {
-                                id: 'name',
-                                numeric: false,
-                                disablePadding: true,
-                                label: 'Name',
-                            },
-                            {
-                                id: 'degree',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Degree',
-                            },
-                            {
-                                id: 'date',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Date',
-                            },
-                            {
-                                id: 'parameters',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Parameters',
-                            },
-                            {
-                                id: 'tools',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Tools',
-                            },
-                        ]}
                         rows={byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
                             return {
                                 id,
                                 name: <UserDetail user={user} />,
                                 degree: user.degree.title,
                                 date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
-                                parameters: parameters?.map(({ id, title, value }) => {
+                                tools: <StarUser type="compare" pid={data.id} uid={user.id} />,
+                                detail: parameters?.map(({ id, title, value }) => {
                                     return <Stack direction="column" alignItems="stretch">
                                         <Typography>{title}</Typography>
                                         <Slider
@@ -153,7 +122,6 @@ const Item = ({ data }) => {
                                         />
                                     </Stack>
                                 }),
-                                tools: <StarUser type="comment" pid={1} score={null} />
                             }
                         })}
                     />

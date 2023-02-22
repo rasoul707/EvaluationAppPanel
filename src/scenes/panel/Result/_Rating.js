@@ -75,46 +75,21 @@ const Item = ({ data }) => {
             <Grid item xs={12} key={2} textAlign='center'>
                 {showDetail &&
                     <UserDataTable
-                        headers={[
-                            {
-                                id: 'name',
-                                numeric: false,
-                                disablePadding: true,
-                                label: 'Name',
-                            },
-                            {
-                                id: 'degree',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Degree',
-                            },
-                            {
-                                id: 'date',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Date',
-                            },
-                            {
-                                id: 'rating',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Rating',
-                            },
-                            {
-                                id: 'tools',
-                                numeric: false,
-                                disablePadding: false,
-                                label: 'Tools',
-                            },
-                        ]}
                         rows={byList?.map(({ id, evaluated_by: user, rating, datetime }) => {
                             return {
                                 id,
                                 name: <UserDetail user={user} />,
                                 degree: user.degree.title,
                                 date: moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
-                                rating: rating,
-                                tools: <StarUser type="comment" pid={1} score={null} />
+                                detail: <>
+                                    <Rating
+                                        max={5}
+                                        value={rating / 2}
+                                        precision={0.5}
+                                        readOnly
+                                    />
+                                </>,
+                                tools: <StarUser type="rating" pid={data.id} uid={user.id} />
                             }
                         })}
                     />

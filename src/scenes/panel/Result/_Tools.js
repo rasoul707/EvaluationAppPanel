@@ -36,13 +36,27 @@ import Stack from '@mui/material/Stack';
 import StarsIcon from '@mui/icons-material/Stars';
 
 
-import { Dialog, DialogTitle, DialogContent, DialogActions, } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Collapse, } from '@mui/material';
 import moment from 'moment';
 import UserBioDialog from "../../../components/UserBioDialog"
 
 import VerifiedIcon from '@mui/icons-material/Verified';
 import Avatar from '@mui/material/Avatar'
 import { MEDIABaseUrl } from "../../../config/server"
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+
+
+import * as API from "../../../api";
+
+
+import { useSelector, } from "react-redux";
+
+
+
+
 
 const colors = scaleOrdinal(schemeCategory10).range();
 
@@ -177,9 +191,36 @@ export const Detail = ({ title, completed, deadline, published, max, evaluates, 
 
 // =====================================
 
+const _headers = [
+    {
+        id: 'name',
+        numeric: false,
+        disablePadding: true,
+        label: 'Name',
+    },
+    {
+        id: 'degree',
+        numeric: false,
+        disablePadding: false,
+        label: 'Degree',
+    },
+    {
+        id: 'date',
+        numeric: false,
+        disablePadding: false,
+        label: 'Date',
+    },
+    {
+        id: 'tools',
+        numeric: false,
+        disablePadding: false,
+        label: 'Tools',
+    },
+]
+
 
 function EnhancedTableHead(props) {
-    const { order, orderBy, onRequestSort, headers } = props;
+    const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -187,7 +228,8 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                {headers.map((headCell) => (
+                <TableCell />
+                {_headers.map((headCell) => (
                     <TableCell
                         key={headCell.id}
                         align={'center'}
@@ -215,11 +257,13 @@ function EnhancedTableHead(props) {
 
 
 
-export function UserDataTable({ headers = [], rows = [], defaultOrderBy = 'id', defaultOrder = 'asc' }) {
+export function UserDataTable({ rows = [], defaultOrderBy = 'id', defaultOrder = 'asc' }) {
     const [order, setOrder] = React.useState(defaultOrder);
     const [orderBy, setOrderBy] = React.useState(defaultOrderBy);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    const [openDetail, setOpenDetail] = React.useState(null);
 
 
     function descendingComparator(a, b, orderBy) {
@@ -278,24 +322,47 @@ export function UserDataTable({ headers = [], rows = [], defaultOrderBy = 'id', 
                         aria-labelledby="tableTitle"
                     >
                         <EnhancedTableHead
-                            headers={headers}
                             order={order}
                             orderBy={orderBy}
                             onRequestSort={handleRequestSort}
                         />
                         <TableBody>
+
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    return <TableRow
-                                        hover
-                                        tabIndex={-1}
-                                        key={row.id}
-                                    >
-                                        {headers.map(({ id }) => {
-                                            return <TableCell align="center">{row[id]}</TableCell>
-                                        })}
-                                    </TableRow>
+                                    return <>
+                                        <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            key={row.id}
+                                        >
+                                            <TableCell>
+                                                <IconButton
+                                                    aria-label="expand row"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        if (openDetail === row.id) setOpenDetail(null)
+                                                        else setOpenDetail(row.id)
+                                                    }}
+                                                >
+                                                    {openDetail === row.id ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                                </IconButton>
+                                            </TableCell>
+                                            {_headers.map(({ id }) => {
+                                                return <TableCell align="center">{row[id]}</TableCell>
+                                            })}
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                                                <Collapse in={openDetail === row.id} timeout="auto" unmountOnExit>
+                                                    <Box sx={{ margin: 1 }}>
+                                                        {row.detail}
+                                                    </Box>
+                                                </Collapse>
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
                                 })
                             }
                             {!rows.length && (
@@ -328,8 +395,10 @@ export function UserDataTable({ headers = [], rows = [], defaultOrderBy = 'id', 
 
 
 
-export const StarUser = ({ type = "metric", pid, score = null }) => {
+export const StarUser = ({ type = "metric", pid, uid, }) => {
+
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [disabled, setDisabled] = React.useState(true);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -340,7 +409,7 @@ export const StarUser = ({ type = "metric", pid, score = null }) => {
     };
 
     const done = () => {
-        //
+        setScore()
         handleClose()
     }
 
@@ -349,8 +418,35 @@ export const StarUser = ({ type = "metric", pid, score = null }) => {
 
     const [_score, _setScore] = React.useState(0)
 
+
+    const getScore = async () => {
+        setDisabled(true)
+        try {
+            const response = await API.GET()(`score/?user=${uid}&${type}=${pid}`)
+            if (response.data && response.data[0]) {
+                const sc = response.data[0].score
+                _setScore(sc)
+                setDisabled(true)
+            }
+            else {
+                setDisabled(false)
+            }
+        } catch (error) {
+            setDisabled(true)
+        }
+    }
+
+    const setScore = async () => {
+        try {
+            await API.POST()(`score/`, { user: uid, [type]: pid, score: parseFloat(_score) })
+        } catch (error) {
+
+        }
+    }
+
+
     React.useEffect(() => {
-        if (open) _setScore(0)
+        if (open) getScore()
     }, [open])
 
 
@@ -375,8 +471,8 @@ export const StarUser = ({ type = "metric", pid, score = null }) => {
                         max={5}
                         precision={0.5}
                         sx={{ p: 2 }}
-                        readOnly={score !== null}
-                        value={score !== null ? score / 2 : _score}
+                        readOnly={disabled}
+                        value={_score}
                         onChange={(e) => _setScore(e.target.value)}
                     />
                     <Button
@@ -384,7 +480,7 @@ export const StarUser = ({ type = "metric", pid, score = null }) => {
                         color='secondary'
                         onClick={done}
                         variant='contained'
-                        disabled={score !== null}
+                        disabled={disabled}
                     />
                 </Stack>
             </Popover>
