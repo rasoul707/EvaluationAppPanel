@@ -103,6 +103,23 @@ const Item = ({ data }) => {
                                 }),
                             }
                         })}
+                        csvData={[
+                            ['FullName', 'Email', 'Verify', 'Score', 'Stars', 'Degree', 'Date', ...data.parameters.map(({ id, title, value }) => { return title })],
+                            ...byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
+                                return [
+                                    user.first_name + " " + user.last_name,
+                                    user.email,
+                                    user.is_verified,
+                                    user.evaluator_scores,
+                                    user.stars,
+                                    user.degree?.title,
+                                    moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
+                                    ...parameters?.map(({ id, title, value }) => {
+                                        return value
+                                    })
+                                ]
+                            })
+                        ]}
                     />
                 }
             </Grid>

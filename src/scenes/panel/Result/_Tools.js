@@ -47,6 +47,7 @@ import { MEDIABaseUrl } from "../../../config/server"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+import { CSVLink } from 'react-csv'
 
 
 import * as API from "../../../api";
@@ -257,13 +258,19 @@ function EnhancedTableHead(props) {
 
 
 
-export function UserDataTable({ rows = [], defaultOrderBy = 'id', defaultOrder = 'asc' }) {
+export function UserDataTable({ rows = [], defaultOrderBy = 'id', defaultOrder = 'asc', csvData = [] }) {
     const [order, setOrder] = React.useState(defaultOrder);
     const [orderBy, setOrderBy] = React.useState(defaultOrderBy);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const [openDetail, setOpenDetail] = React.useState(null);
+
+    const csvLink = React.useRef()
+
+    const downloadCSV = () => {
+        csvLink.current.link.click()
+    }
 
 
     function descendingComparator(a, b, orderBy) {
@@ -315,7 +322,23 @@ export function UserDataTable({ rows = [], defaultOrderBy = 'id', defaultOrder =
 
     return (
         <Box sx={{ width: '100%' }}>
+
             <Paper sx={{ width: '100%', mb: 2 }}>
+                <Button
+                    children={"Export CSV"}
+                    variant='outlined'
+                    size='small'
+                    onClick={downloadCSV}
+                />
+                <CSVLink
+                    data={csvData}
+                    filename='export_evaluation.csv'
+                    className='hidden'
+                    ref={csvLink}
+                    target='_blank'
+                />
+
+
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
