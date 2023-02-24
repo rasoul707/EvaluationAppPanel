@@ -472,8 +472,8 @@ export const StarUser = ({ type = "metric", pid, uid, }) => {
                         precision={0.5}
                         sx={{ p: 2 }}
                         readOnly={disabled}
-                        value={_score}
-                        onChange={(e) => _setScore(e.target.value)}
+                        value={_score / 2}
+                        onChange={(e) => _setScore(e.target.value * 2)}
                     />
                     <Button
                         children="Submit"
