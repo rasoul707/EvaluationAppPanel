@@ -178,6 +178,36 @@ const Item = ({ data }) => {
                                 }),
                             }
                         })}
+                        csvData={[
+                            ['FullName', 'Email', 'Verify', 'Score', 'Stars', 'Degree', 'Date', ...Object.keys(byList[0].parameters)?.reduce((acc, index) => {
+                                const { id, name, questions } = byList[0].parameters[index]
+                                return acc.concat([
+                                    ...questions?.map(({ answer, custom_options, options, question }, index) => {
+                                        return name + "-Q" + (index + 1)
+                                    })
+                                ])
+                            }, [])],
+                            ...byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
+                                return [
+                                    user.first_name + " " + user.last_name,
+                                    user.email,
+                                    user.is_verified,
+                                    user.evaluator_scores,
+                                    user.stars,
+                                    user.degree?.title,
+                                    moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
+                                    ...Object.keys(parameters)?.reduce((acc, index) => {
+                                        const { id, name, questions } = parameters[index]
+                                        return acc.concat([
+                                            ...questions?.map(({ answer, custom_options, options, question }) => {
+                                                const _op = custom_options ? options : "Useless|Poor|Ok|Good|Excellent"
+                                                return _op.split("|")[answer - 1]
+                                            })
+                                        ])
+                                    }, [])
+                                ]
+                            })
+                        ]}
                     />
                 }
             </Grid>

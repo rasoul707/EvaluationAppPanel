@@ -103,8 +103,9 @@ const Item = ({ data }) => {
                                 }),
                             }
                         })}
+
                         csvData={[
-                            ['FullName', 'Email', 'Verify', 'Score', 'Stars', 'Degree', 'Date', ...data.parameters.map(({ id, title, value }) => { return title })],
+                            ['FullName', 'Email', 'Verify', 'Score', 'Stars', 'Degree', 'Date', ...data.parameters.reduce((acc, { title, }) => { return acc.concat([title]) }, [])],
                             ...byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
                                 return [
                                     user.first_name + " " + user.last_name,
@@ -114,9 +115,7 @@ const Item = ({ data }) => {
                                     user.stars,
                                     user.degree?.title,
                                     moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
-                                    ...parameters?.map(({ id, title, value }) => {
-                                        return value
-                                    })
+                                    ...parameters?.reduce((acc, { value, }) => { return acc.concat([value]) }, [])
                                 ]
                             })
                         ]}
@@ -124,7 +123,6 @@ const Item = ({ data }) => {
                 }
             </Grid>
         </Grid >
-
         <Grid container item>
             <Grid item xs={12}>
                 <Divider />

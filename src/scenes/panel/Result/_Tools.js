@@ -172,9 +172,10 @@ export const Detail = ({ title, completed, deadline, published, max, evaluates, 
         <Dialog
             open={openChart}
             onClose={() => setOpenChart(false)}
+            sx={{ "& .MuiPaper-root": { maxWidth: "1000px" } }}
         >
             <DialogTitle>Charts</DialogTitle>
-            <DialogContent sx={{ minWidth: "500px", width: `${chartWidth}px` }}>
+            <DialogContent sx={{ width: `${chartWidth}px` }}>
                 {chart}
             </DialogContent>
             {/* <DialogActions> */}

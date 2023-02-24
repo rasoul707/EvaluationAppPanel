@@ -124,6 +124,21 @@ const Item = ({ data }) => {
                                 }),
                             }
                         })}
+                        csvData={[
+                            ['FullName', 'Email', 'Verify', 'Score', 'Stars', 'Degree', 'Date', ...data.parameters.reduce((acc, { title, }) => { return acc.concat([title + ":soft", title + ":target"]) }, [])],
+                            ...byList?.map(({ id, evaluated_by: user, parameters, datetime }) => {
+                                return [
+                                    user.first_name + " " + user.last_name,
+                                    user.email,
+                                    user.is_verified,
+                                    user.evaluator_scores,
+                                    user.stars,
+                                    user.degree?.title,
+                                    moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
+                                    ...parameters?.reduce((acc, { value, }) => { return acc.concat([value.soft, value.target]) }, [])
+                                ]
+                            })
+                        ]}
                     />
                 }
             </Grid>

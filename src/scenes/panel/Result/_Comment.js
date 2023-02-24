@@ -71,6 +71,21 @@ const Item = ({ data }) => {
                                 tools: <StarUser type="comment" pid={data.id} uid={user.id} />
                             }
                         })}
+                        csvData={[
+                            ['FullName', 'Email', 'Verify', 'Score', 'Stars', 'Degree', 'Date', 'Comment'],
+                            ...byList?.map(({ id, evaluated_by: user, comment, datetime }) => {
+                                return [
+                                    user.first_name + " " + user.last_name,
+                                    user.email,
+                                    user.is_verified,
+                                    user.evaluator_scores,
+                                    user.stars,
+                                    user.degree?.title,
+                                    moment(datetime).format("YYYY-MM-DD HH:mm") || "-",
+                                    comment
+                                ]
+                            })
+                        ]}
                     />
                 }
             </Grid>
