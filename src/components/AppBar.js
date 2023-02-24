@@ -34,8 +34,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import * as API from "../api"
 
-
-
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 
 const ResponsiveAppBar = () => {
 
@@ -44,14 +46,22 @@ const ResponsiveAppBar = () => {
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [menuUtils, setMenuUtils] = React.useState(null);
+
+    const [notifications, setNotifications] = React.useState([]);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event) => {
+        setMenuUtils('user')
         setAnchorElUser(event.currentTarget);
     };
-
+    const handleOpenNotifyMenu = (event) => {
+        setMenuUtils('notify')
+        getNotifications()
+        setAnchorElUser(event.currentTarget);
+    };
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
@@ -80,6 +90,90 @@ const ResponsiveAppBar = () => {
             { title: 'Evaluations', icon: <EvaluationIcon />, url: '/evaluations' }
         ]
     }
+
+
+
+    // notifications
+    const readAllNotify = async () => {
+
+    }
+    const handleNotifyClick = async (index) => {
+
+    }
+    const getNotifications = async (index) => {
+        try {
+            const response = await API.GET()(`notification/`)
+            setNotifications(response.data)
+        } catch (error) { }
+    }
+    // const _notifications = [
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHED",
+    //         read: true,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_PEOPLE_COUNT",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "GET_SCORE",
+    //         read: true,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    //     {
+    //         subject: "EVALUATION_TIME_FINISHING",
+    //         read: false,
+    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
+    //         url: "/softwares/8/"
+    //     },
+    // ]
 
 
 
@@ -176,6 +270,7 @@ const ResponsiveAppBar = () => {
                         <Tooltip title="Notifications">
                             <IconButton
                                 color="inherit"
+                                onClick={handleOpenNotifyMenu}
                             >
                                 <Badge badgeContent={0} color="error">
                                     <NotificationsIcon />
@@ -184,7 +279,6 @@ const ResponsiveAppBar = () => {
                         </Tooltip>
 
                         <Tooltip title="Profile">
-
                             <IconButton onClick={handleOpenUserMenu} sx={{ ml: 2 }}>
                                 <Badge
                                     color="warning"
@@ -202,7 +296,6 @@ const ResponsiveAppBar = () => {
                                     />
                                 </Badge>
                             </IconButton>
-
                         </Tooltip>
 
 
@@ -216,10 +309,14 @@ const ResponsiveAppBar = () => {
                             onClick={handleCloseUserMenu}
                             PaperProps={{
                                 elevation: 0,
+                                style: {
+                                    width: menuUtils === 'notify' ? '320px' : null,
+                                },
                                 sx: {
                                     overflow: 'visible',
                                     filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                                     mt: 1.5,
+                                    textAlign: "center",
                                     '& .MuiAvatar-root': {
                                         width: 32,
                                         height: 32,
@@ -243,60 +340,114 @@ const ResponsiveAppBar = () => {
                             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         >
-                            <MenuItem
-                                component={LinkRoute}
-                                to={"/profile"}
-                            >
-                                <Stack direction="column" justifyContent="center" alignItems="center">
-                                    <Stack direction="row" justifyContent="center" alignItems="center" sx={{ mb: 1, }}>
-                                        <Avatar
-                                            alt={user.first_name + ' ' + user.last_name}
-                                            src={user.avatar?.medium ?? "/no-avatar"}
-                                        />
-                                        {user.is_verified && <VerifiedIcon sx={{ mr: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
-                                        {user.first_name + ' ' + user.last_name}
-                                    </Stack>
-                                    <Chip label={user.user_level} sx={{ width: "100%", mb: 1 }} />
-                                    <Divider sx={{ width: "100%" }} />
-                                    <Stack direction="column" justifyContent="center" alignItems="center" sx={{ mt: 1 }}>
-                                        <Box sx={{ ml: 1 }}>(score: {user.evaluator_scores})</Box>
-                                        <Rating
-                                            max={5}
-                                            value={user.stars / 2}
-                                            precision={0.5}
-                                            readOnly
-                                        />
-                                    </Stack>
-                                </Stack>
-                            </MenuItem>
-                            <Divider />
-                            <MenuItem
-                                component={LinkRoute}
-                                to={"/settings"}
-                                disabled
-                            >
-                                <ListItemIcon>
-                                    <SettingsIcon fontSize="small" />
-                                </ListItemIcon>
-                                Settings
-                            </MenuItem>
-                            <MenuItem
-                                component={LinkRoute}
-                                to={"/shop"}
-                            >
-                                <ListItemIcon>
-                                    <ShopIcon fontSize="small" />
-                                </ListItemIcon>
-                                Shop
-                            </MenuItem>
-                            <MenuItem
-                                onClick={logout}
-                            >
-                                <ListItemIcon>
-                                    <LogoutIcon fontSize="small" />
-                                </ListItemIcon>
-                                Logout
-                            </MenuItem>
+                            {
+                                menuUtils === 'notify'
+                                    ?
+                                    <List
+                                        component="nav"
+                                        sx={{
+                                            width: '100%',
+                                            maxWidth: 800,
+                                            bgcolor: 'background.paper',
+                                            position: 'relative',
+                                            overflow: 'auto',
+                                            maxHeight: 300,
+                                            padding: 0,
+                                            '& ul': { padding: 0 },
+                                        }}
+                                    >
+                                        <ListSubheader>
+                                            <Button
+                                                children={"Read all"}
+                                                variant='outlined'
+                                                size='small'
+                                                sx={{ mb: 1 }}
+                                                onClick={readAllNotify}
+                                            />
+                                        </ListSubheader>
+                                        {notifications.map(({ url, content, title, read }, index) => {
+                                            return <>
+                                                <Divider />
+                                                <ListItem
+                                                    button
+                                                    onClick={() => handleNotifyClick(index)}
+                                                    sx={{ background: read ? "#dbdbdb" : "background.paper" }}
+                                                >
+                                                    <ListItemText
+                                                        primary={title}
+                                                        secondary={content}
+                                                    />
+                                                </ListItem>
+                                            </>
+                                        })}
+                                        {notifications.length === 0 && <ListItem>
+                                            <ListItemText
+                                                secondary={"No notification found :)"}
+                                            />
+                                        </ListItem>}
+                                    </List>
+                                    : <>
+                                        <MenuItem
+                                            component={LinkRoute}
+                                            to={"/profile"}
+                                        >
+                                            <Stack direction="column" justifyContent="center" alignItems="center">
+                                                <Stack direction="row" justifyContent="center" alignItems="center" sx={{ mb: 1, }}>
+                                                    <Avatar
+                                                        alt={user.first_name + ' ' + user.last_name}
+                                                        src={user.avatar?.medium ?? "/no-avatar"}
+                                                    />
+                                                    {user.is_verified && <VerifiedIcon sx={{ mr: 1, color: "rgb(29, 155, 240)" }} fontSize="small" />}
+                                                    {user.first_name + ' ' + user.last_name}
+                                                </Stack>
+                                                <Chip label={user.user_level} sx={{ width: "100%", mb: 1 }} />
+                                                <Divider sx={{ width: "100%" }} />
+                                                <Stack direction="column" justifyContent="center" alignItems="center" sx={{ mt: 1 }}>
+                                                    <Box sx={{ ml: 1 }}>(score: {user.evaluator_scores})</Box>
+                                                    <Rating
+                                                        max={5}
+                                                        value={user.stars / 2}
+                                                        precision={0.5}
+                                                        readOnly
+                                                    />
+                                                </Stack>
+                                            </Stack>
+                                        </MenuItem>
+                                        <Divider />
+                                        <MenuItem
+                                            component={LinkRoute}
+                                            to={"/settings"}
+                                            disabled
+                                        >
+                                            <ListItemIcon>
+                                                <SettingsIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            Settings
+                                        </MenuItem>
+                                        <MenuItem
+                                            component={LinkRoute}
+                                            to={"/shop"}
+                                        >
+                                            <ListItemIcon>
+                                                <ShopIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            Shop
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={logout}
+                                        >
+                                            <ListItemIcon>
+                                                <LogoutIcon fontSize="small" />
+                                            </ListItemIcon>
+                                            Logout
+                                        </MenuItem>
+                                    </>
+                            }
+
+
+
+
+
                         </Menu>
                     </Box>
                     {/* right menu */}
@@ -304,7 +455,7 @@ const ResponsiveAppBar = () => {
 
                 </Toolbar>
             </Container>
-        </AppBar>
+        </AppBar >
     );
 };
 export default ResponsiveAppBar;
