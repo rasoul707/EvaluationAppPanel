@@ -178,6 +178,7 @@ export const CommentsReplyDialog = ({ data, }) => {
                         datetime={datetime}
                         reply={reply}
                         id={id}
+                        refresh={getCommentsResult}
                     />
                 })}
             </DialogContent>
@@ -210,7 +211,7 @@ const ExpandMore = styled((props) => {
 
 
 
-const CommentBox = ({ comment, user, datetime, reply, id }) => {
+const CommentBox = ({ comment, user, datetime, reply, id, refresh }) => {
 
     const [expanded, setExpanded] = React.useState(false);
     const [myComment, setMyComment] = React.useState("");
@@ -232,6 +233,7 @@ const CommentBox = ({ comment, user, datetime, reply, id }) => {
             // setComments(response.data || [])
             setExpanded(false)
             setMyComment("")
+            refresh()
         } catch (error) {
             // API.ResponseError(enqueueSnackbar, error)
             setExpanded(false)
@@ -250,6 +252,7 @@ const CommentBox = ({ comment, user, datetime, reply, id }) => {
             }
             title={user.first_name + " " + user.last_name}
             subheader={moment(datetime).format("MMM DD, YYYY HH:mm")}
+            sx={{ cursor: "pointer" }}
         />
         <CardContent>
             <Typography variant="body2" color="text.secondary">
