@@ -189,6 +189,7 @@ export default function Evaluation() {
                     data={commentData}
                     set={setCommentData}
                     disabled={disabled}
+                    softID={softID}
                 />
             </TabPanel>
         }
