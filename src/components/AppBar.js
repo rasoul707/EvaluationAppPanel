@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link as LinkRoute } from "react-router-dom"
+import { Link as LinkRoute, useHistory } from "react-router-dom"
 import { useSelector } from "react-redux";
 
 
@@ -50,6 +50,8 @@ const ResponsiveAppBar = () => {
 
     const [notifications, setNotifications] = React.useState([]);
 
+    const history = useHistory()
+
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -98,7 +100,7 @@ const ResponsiveAppBar = () => {
 
     }
     const handleNotifyClick = async (index) => {
-
+        history.push(notifications[index].url)
     }
     const getNotifications = async (index) => {
         try {
@@ -106,74 +108,6 @@ const ResponsiveAppBar = () => {
             setNotifications(response.data)
         } catch (error) { }
     }
-    // const _notifications = [
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHED",
-    //         read: true,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_PEOPLE_COUNT",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "GET_SCORE",
-    //         read: true,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    //     {
-    //         subject: "EVALUATION_TIME_FINISHING",
-    //         read: false,
-    //         content: "The time of Metric evaluation of Joint work desk system of Mashhad municipality will be finish, you can extend it",
-    //         url: "/softwares/8/"
-    //     },
-    // ]
 
 
 
