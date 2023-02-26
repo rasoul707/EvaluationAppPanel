@@ -153,7 +153,7 @@ export const Detail = ({ title, completed, deadline, published, max, evaluates, 
         <Typography variant='subtitle1' textAlign='center'>
             <b>Deadline:</b> {moment(deadline).format("YYYY-MM-DD")}
         </Typography>
-        {extra}
+
         <Stack direction="row" columnGap={1} justifyContent="center" alignItems="center" sx={{ mt: 2 }}>
             <Button
                 children={showDetail ? "Hide detail" : "Show detail"}
@@ -165,7 +165,7 @@ export const Detail = ({ title, completed, deadline, published, max, evaluates, 
                     <EqualizerIcon />
                 </IconButton>
             }
-
+            {extra}
         </Stack>
 
 
