@@ -42,7 +42,7 @@ const Item = ({ data, setUserData, disabled }) => {
                 <Typography variant='subtitle2'>
                     {data.section?.title}
                 </Typography>
-                <CommentsReplyDialog data={data} disabled={disabled} />
+                <CommentsReplyDialog data={data} />
             </Grid>
 
             <Grid item xs={12}>

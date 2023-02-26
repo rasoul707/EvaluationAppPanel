@@ -15,6 +15,9 @@ import Stack from '@mui/material/Stack';
 import StarsIcon from '@mui/icons-material/Stars';
 import moment from 'moment';
 
+
+import { CommentsReplyDialog } from "../Evaluate/_Comment"
+
 const Item = ({ data }) => {
 
     const [showDetail, setShowDetail] = React.useState(false)
@@ -49,6 +52,7 @@ const Item = ({ data }) => {
                         evaluates={data.evaluates}
                         setShowDetail={() => setShowDetail(!showDetail)}
                         showDetail={showDetail}
+                        extra={<CommentsReplyDialog data={data} />}
                     />
                 </Grid>
             </Grid>
