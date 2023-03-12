@@ -20,6 +20,7 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
 import Layout from "../../../components/Layout"
+import { Divider } from "@mui/material";
 
 
 const Page = () => {
@@ -132,18 +133,22 @@ const Page = () => {
             <Grid item xs={6} md={2}>
                 <FormControl fullWidth >
                     <InputLabel>Type</InputLabel>
+                    {type}
                     <Select
                         label="Type"
                         value={type}
                         onChange={(e) => {
                             let v = e.target.value
                             if (v.includes("ALL")) v = typeList.map(({ id }) => id)
+                            if (v.includes("NONE")) v = []
                             setType(v)
                         }}
                         disabled={disabled}
                         multiple
                     >
                         <MenuItem value="ALL"><em>All</em></MenuItem>
+                        <MenuItem value="NONE"><em>None</em></MenuItem>
+                        <Divider />
                         {typeList.map(({ id, name }) => <MenuItem value={id}>{name}</MenuItem>)}
                     </Select>
                 </FormControl>
@@ -157,12 +162,15 @@ const Page = () => {
                         onChange={(e) => {
                             let v = e.target.value
                             if (v.includes("ALL")) v = areaList.map(({ id }) => id)
+                            if (v.includes("NONE")) v = []
                             setArea(v)
                         }}
                         disabled={disabled}
                         multiple
                     >
                         <MenuItem value="ALL"><em>All</em></MenuItem>
+                        <MenuItem value="NONE"><em>None</em></MenuItem>
+                        <Divider />
                         {areaList.map(({ id, name }) => <MenuItem value={id}>{name}</MenuItem>)}
                     </Select>
                 </FormControl>
