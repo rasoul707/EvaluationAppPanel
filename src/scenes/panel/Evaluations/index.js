@@ -133,7 +133,6 @@ const Page = () => {
             <Grid item xs={6} md={2}>
                 <FormControl fullWidth >
                     <InputLabel>Type</InputLabel>
-                    {type}
                     <Select
                         label="Type"
                         value={type}
